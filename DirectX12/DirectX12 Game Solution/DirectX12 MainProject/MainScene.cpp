@@ -15,7 +15,12 @@ MainScene::MainScene() : dx9GpuDescriptor{}
 // Initialize a variable and audio resources.
 void MainScene::Initialize()
 {
-    
+    gauge_x_      = GAUGE_POSITION_X_;
+    gauge_y_      = GAUGE_POSITION_Y_;
+    gauge_red_z_  = GAUGE_RED_POSITION_Z_;
+    gauge_blue_z_ = GAUGE_BLUE_POSITION_Z_;
+
+    gauge_red_width_ = GAUGE_RED_WIDTH_START_;
 }
 
 // Allocate all memory the Direct3D and Direct2D resources.
@@ -44,6 +49,9 @@ void MainScene::LoadAssets()
     // グラフィックリソースの初期化処理
 
     bottun_font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ゴシック", 20);
+
+    gauge_red_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Red_.png");
+    gauge_blue_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Blue_.png");
 }
 
 // Releasing resources required for termination.
@@ -76,7 +84,11 @@ NextScene MainScene::Update(const float deltaTime)
 
     // TODO: Add your game logic here.
 
-    
+    gauge_red_width_ += GAUGE_RED_WIDTH_ADD_SPEED_ * deltaTime;
+
+    if (DXTK->KeyEvent->pressed.Space) {
+        gauge_red_width_ -= GAUGE_RED_WIDTH_TAKE_SPEED_ * deltaTime;
+    }
 
     return NextScene::Continue;
 }
@@ -92,7 +104,13 @@ void MainScene::Render()
     DXTK->Direct3D9->BeginScene();
     DX9::SpriteBatch->Begin();
 
-    
+    DX9::SpriteBatch->DrawSimple(
+        gauge_red_sprite_.Get(),
+        SimpleMath::Vector3(gauge_x_, gauge_y_, gauge_red_z_),
+        RectWH(0.0f, 0.0f, gauge_red_width_, GAUGE_RED_HEIGHT_START_)
+    );
+
+    DX9::SpriteBatch->DrawSimple(gauge_blue_sprite_.Get(), SimpleMath::Vector3(gauge_x_, gauge_y_, gauge_blue_z_));
 
 
     DX9::SpriteBatch->End();

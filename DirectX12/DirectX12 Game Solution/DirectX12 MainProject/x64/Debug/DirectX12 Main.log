@@ -7,4 +7,8 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\amprt.h(3680,92): warning C5040: 動的な例外の指定は、C++14 以前でのみ有効です。noexcept(false) として扱います
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\amprt.h(3689,93): warning C5040: 動的な例外の指定は、C++14 以前でのみ有効です。noexcept(false) として扱います
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\amprt.h(3692,89): warning C5040: 動的な例外の指定は、C++14 以前でのみ有効です。noexcept(false) として扱います
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectX12 MainProject\MainScene.cpp(110,46): warning C4244: '引数': 'const float' から 'const int' への変換です。データが失われる可能性があります。
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectX12 MainProject\MainScene.cpp(110,28): warning C4244: '引数': 'float' から 'const int' への変換です。データが失われる可能性があります。
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectX12 MainProject\MainScene.cpp(110,22): warning C4244: '引数': 'float' から 'const int' への変換です。データが失われる可能性があります。
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectX12 MainProject\MainScene.cpp(110,16): warning C4244: '引数': 'float' から 'const int' への変換です。データが失われる可能性があります。
   DirectX12 Main.vcxproj -> C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\x64\Debug\DirectX12 Game Solution.exe

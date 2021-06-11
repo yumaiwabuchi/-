@@ -1,0 +1,15 @@
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.ipch
+*.obj
+*.idb
+*.pdb
+*.tlog
+*.lastbuildstate
+*.url
+*.exe
+*.pdf
+*.ilk
+*.pch

@@ -43,5 +43,23 @@ private:
 
     DX9::SPRITEFONT bottun_font_;
 
+    DX9::SPRITE gauge_red_sprite_;
+    DX9::SPRITE gauge_blue_sprite_;
+
+    const float GAUGE_POSITION_X_           =  340.0f;
+    const float GAUGE_POSITION_Y_           =  260.0f;
+    const float GAUGE_RED_POSITION_Z_       =    0.0f;
+    const float GAUGE_BLUE_POSITION_Z_      =    1.0f;
+    const float GAUGE_RED_HEIGHT_START_     =  200.0f;
+    const float GAUGE_RED_WIDTH_START_      =  300.0f;
+    const float GAUGE_RED_WIDTH_ADD_SPEED_  =  210.0f;
+    const float GAUGE_RED_WIDTH_TAKE_SPEED_ =  1400.0f;
+
+    float gauge_x_;
+    float gauge_y_;
+    float gauge_red_z_;
+    float gauge_blue_z_;
+
+    float gauge_red_width_;
     
 };
