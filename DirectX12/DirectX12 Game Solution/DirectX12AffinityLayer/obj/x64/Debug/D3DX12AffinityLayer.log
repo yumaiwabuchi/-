@@ -1,0 +1,26 @@
+﻿  d3dx12affinity.cpp
+  CD3DX12AffinityCommandAllocator.cpp
+  CD3DX12AffinityCommandList.cpp
+  CD3DX12AffinityCommandQueue.cpp
+  CD3DX12AffinityCommandSignature.cpp
+  CD3DX12AffinityDescriptorHeap.cpp
+  CD3DX12AffinityDevice.cpp
+  CD3DX12AffinityDeviceChild.cpp
+  CD3DX12AffinityFence.cpp
+  CD3DX12AffinityGraphicsCommandList.cpp
+  CD3DX12AffinityHeap.cpp
+  CD3DX12AffinityObject.cpp
+  CD3DX12AffinityPageable.cpp
+  CD3DX12AffinityPipelineState.cpp
+  CD3DX12AffinityQueryHeap.cpp
+  CD3DX12AffinityResource.cpp
+  CD3DX12AffinityRootSignature.cpp
+  CDXGIAffinitySwapChain.cpp
+  D3DX12AffinityCreateMultiDevice.cpp
+  DXGIXAffinityCreateLDASwapChain.cpp
+  DXGIXAffinityCreateSingleWindowSwapChain.cpp
+  コードを生成中...
+  コンパイル中...
+  Utils.cpp
+  コードを生成中...
+  D3DX12AffinityLayer.vcxproj -> C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectX12AffinityLayer\bin\x64\Debug\D3DX12AffinityLayer.lib
