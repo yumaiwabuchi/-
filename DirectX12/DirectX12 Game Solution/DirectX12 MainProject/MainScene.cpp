@@ -16,6 +16,10 @@ MainScene::MainScene() : dx9GpuDescriptor{}
 void MainScene::Initialize()
 {
     
+    
+    waveX = 0;
+
+
 }
 
 // Allocate all memory the Direct3D and Direct2D resources.
@@ -44,6 +48,15 @@ void MainScene::LoadAssets()
     // ƒOƒ‰ƒtƒBƒbƒNƒŠƒ\[ƒX‚Ì‰Šú‰»ˆ—
 
     bottun_font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ƒSƒVƒbƒN", 20);
+
+    //”wŒi
+    Main_bg_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"blue_bg.png");
+    //”wŒi@ƒAƒjƒ[ƒVƒ‡ƒ“
+    sun_wave_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"‘¾—zŒõ.png");
+
+    //‹›ƒLƒƒƒ‰ƒNƒ^[
+    Main_fish_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"fish.png");
+
 }
 
 // Releasing resources required for termination.
@@ -76,7 +89,13 @@ NextScene MainScene::Update(const float deltaTime)
 
     // TODO: Add your game logic here.
 
-    
+    //”wŒi@ƒAƒjƒ[ƒVƒ‡ƒ“
+    if (true)
+        waveX += 20;
+
+    if (waveX >= 2560)
+        waveX = 0;
+
 
     return NextScene::Continue;
 }
@@ -92,7 +111,16 @@ void MainScene::Render()
     DXTK->Direct3D9->BeginScene();
     DX9::SpriteBatch->Begin();
 
-    
+    //”wŒi@‰æ‘œ
+    DX9::SpriteBatch->DrawSimple(Main_bg_.Get(), SimpleMath::Vector3( 0, 0, 0));
+    //”wŒi@ƒAƒjƒ[ƒVƒ‡ƒ“
+    DX9::SpriteBatch->DrawSimple(sun_wave_.Get(), SimpleMath::Vector3( 0, 90, -1),
+    RectWH(waveX, 0, 1280, 120));
+
+
+    //‹›@‰æ‘œ
+    DX9::SpriteBatch->DrawSimple(Main_fish_.Get(), SimpleMath::Vector3(0, 0, -1));
+
 
 
     DX9::SpriteBatch->End();

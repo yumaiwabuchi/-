@@ -43,5 +43,16 @@ private:
 
     DX9::SPRITEFONT bottun_font_;
 
+
+    //背景　画像
+    DX9::SPRITE Main_bg_;
+
+    //波 アニメーション
+    DX9::SPRITE sun_wave_;
+
+    int waveX;
+
+    //魚　画像
+    DX9::SPRITE Main_fish_;
     
 };
