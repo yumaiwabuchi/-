@@ -41,18 +41,79 @@ private:
 
     // 変数の宣言
 
-    DX9::SPRITEFONT bottun_font_;
+    DX9::SPRITEFONT tap_font_;
 
+    DX9::SPRITE gauge_red_sprite_;
+    DX9::SPRITE gauge_blue_sprite_;
 
-    //背景　画像
-    DX9::SPRITE Main_bg_;
+    DX9::SPRITE shark_sprite_;
 
-    //波 アニメーション
-    DX9::SPRITE sun_wave_;
+    DX9::SPRITE fishing_rod_sprite_;
 
-    int waveX;
-
-    //魚　画像
-    DX9::SPRITE Main_fish_;
+    // 定数
     
+    const float SHARK_START_POSITION_X_ = 640.0f - 200.0f;
+    const float SHARK_START_POSITION_Y_ = 400.0f ;
+    const float SHARK_START_POSITION_Z_ = 0.0f;
+    const float SHARK_RIGHT_LIMIT_POSITION_X_ = 1280.0f - 400.0f;
+    const float SHARK_LEFT_LIMIT_POSITION_X_ = 0.0f;
+    const float SHARK_UP_LIMIT_POSITION_Y_ = 0.0f;
+    const float SHARK_DOWN_LIMIT_POSITION_Y_ = 720.0f - 231.0f;
+    const float SHARK_MOVE_SPEED_ = 300.0f;
+
+    const float FISHING_ROD_START_POSITION_X_ = 0.0f;
+    const float FISHING_ROD_START_POSITION_Y_ = 0.0f;
+    const float FISHING_ROD_START_POSITION_Z_ = 0.0f;
+    const float FISHING_ROD_RIGHT_LIMIT_POSITION_X_ = 1280.0f - 40.0f;
+    const float FISHING_ROD_LEFT_LIMIT_POSITION_X_ = 0.0f;
+    const float FISHING_ROD_UP_LIMIT_POSITION_Y_ = 0.0f;
+    const float FISHING_ROD_DOWN_LIMIT_POSITION_Y_ = 720.0f - 43.0f;
+    const float FISHING_ROD_START_SPEED_ = 100.0f;
+
+    const float TOWARDS_FISHING_ROD_START_SPEED_ = 200.0f;
+
+    const float GAUGE_START_POSITION_X_           =   340.0f;
+    const float GAUGE_START_POSITION_Y_           =   260.0f;
+    const float GAUGE_RED_POSITION_Z_       =     0.0f;
+    const float GAUGE_BLUE_POSITION_Z_      =     1.0f;
+    const float GAUGE_RED_HEIGHT_START_     =   200.0f;
+    const float GAUGE_RED_WIDTH_START_      =   300.0f;
+    const float GAUGE_RED_WIDTH_LIMIT_      =   600.0f;
+    const float GAUGE_RED_WIDTH_ADD_SPEED_  =   210.0f;
+    const float GAUGE_RED_WIDTH_TAKE_SPEED_ =  1400.0f;
+
+    const float COUNT_DOWN_START_           =     100.0f;
+    const float COUNT_DOWN_NUMBER_          =     1.0f;
+
+    // 変数
+    SimpleMath::Vector3 shark_position_;
+    SimpleMath::Vector3 fishing_rod_position_;
+
+    float shark_speed_;
+
+    int fishing_rod_direction;
+    float fishing_rod_speed_;
+
+    float towards_fishing_rod_speed_;
+
+    float gauge_x_;
+    float gauge_y_;
+    float gauge_red_z_;
+    float gauge_blue_z_;
+    float gauge_red_width_;
+    int   gauge_display_flg;
+
+    int   tap_flg_;
+    int   count_down_;
+
+    enum FishingRodMoveDirection {
+        right,
+        left
+    };
+
+// 関数
+private:
+        void GaugeUpdate(const float deltaTime);
+        void SharkUpdate(const float deltaTime);
+        void FishingRodUpdate(const float deltaTime);
 };
