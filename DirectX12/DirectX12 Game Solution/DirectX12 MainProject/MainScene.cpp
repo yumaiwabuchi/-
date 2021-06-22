@@ -33,6 +33,12 @@ void MainScene::Initialize()
 
     shark_hp_flg_ = 0;
 
+    atack_flg_ = 0;
+    atack_move_flg_ = 0;
+    atack_count_ = 0;
+    atack_time_ = 0.0f;
+    atack_move_y_ = 0.0f;
+
     fishing_rod_position_.x = FISHING_ROD_START_POSITION_X_;
     fishing_rod_position_.y = FISHING_ROD_START_POSITION_Y_;
     fishing_rod_position_.z = FISHING_ROD_START_POSITION_Z_;
@@ -96,6 +102,7 @@ void MainScene::LoadAssets()
     // グラフィックリソースの初期化処理
 
     tap_font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ゴシック", 50);
+    debug_font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ゴシック", 25);
 
     gauge_red_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Red_.png");
     gauge_blue_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Blue_.png");
@@ -215,6 +222,9 @@ void MainScene::SharkUpdate(const float deltaTime)
             if (DXTK->KeyEvent->pressed.D || movement.x >= 0.0f) {
                 shark_position_.y += SHARK_MOVE_SPEED_Y_ * deltaTime;
                 shark_direction_flg_ = 1;
+                if (atack_flg_ == 0) {
+                    atack_count_ += 1;
+                }
             }
         }
 
@@ -226,8 +236,55 @@ void MainScene::SharkUpdate(const float deltaTime)
             if (DXTK->KeyEvent->pressed.A || movement.x < 0.0f) {
                 shark_position_.y += SHARK_MOVE_SPEED_Y_ * deltaTime;
                 shark_direction_flg_ = 0;
+                if (atack_flg_ == 0) {
+                    atack_count_ += 1;
+                }
             }
         }
+
+        SharkAtackUpdate(deltaTime);
+
+    }
+}
+
+void MainScene::SharkAtackUpdate(const float deltaTime)
+{
+
+    if (atack_count_ >= 1) {
+        atack_time_ += deltaTime;
+        if (atack_time_ >= SHARK_ATACK_TIME_) {
+            atack_count_ = 0;
+            atack_time_ = 0.0f;
+        }
+    }
+    if (atack_count_ >= 10) {
+        atack_flg_ = 1;
+        atack_count_ = 0;
+    }
+
+    if (atack_flg_ == 1) {
+        shark_position_.y += atack_move_y_ * deltaTime;
+        DXTK->GamePadVibration(0, 1.0f, 1.0f);
+
+        if (atack_move_flg_ == 0) {
+            atack_move_y_ += SHARK_ATACK_GROW_SPEED_ * deltaTime;
+            angler_position_.y += ANGLER_POSITION_SPEED_UP_Y_ * deltaTime;
+            shark_hp_ += SHARK_HP_DAMAGE_ATACK * deltaTime;
+            if (atack_move_y_ >= SHARK_ATACK_LIMIT_SPEED_) {
+                atack_move_flg_ = 1;
+            }
+        }
+        if (atack_move_flg_ == 1) {
+            atack_move_y_ -= SHARK_ATACK_DECREASE_SPEED_ * deltaTime;
+            if (atack_move_y_ <= 0.0f) {
+                atack_move_y_ = 0.0f;
+                atack_move_flg_ = 0;
+                atack_flg_ = 0;
+            }
+        }
+    }
+    else {
+        DXTK->GamePadVibration(0, 0.0f, 0.0f);
     }
 }
 
@@ -409,11 +466,20 @@ void MainScene::Render()
     }
 
     DX9::SpriteBatch->DrawString(
-        tap_font_.Get(),
+        debug_font_.Get(),
         SimpleMath::Vector2(0.0f, 0.0f),
         DX9::Colors::RGBA(0, 0, 0, 255),
-        L"%f", shark_hp_position_y_
+        L"%d", atack_count_
     );
+
+    DX9::SpriteBatch->DrawString(
+        debug_font_.Get(),
+        SimpleMath::Vector2(0.0f, 25.0f),
+        DX9::Colors::RGBA(0, 0, 0, 255),
+        L"%f", atack_time_
+    );
+
+
     
     DX9::SpriteBatch->DrawString(
         tap_font_.Get(),
@@ -437,6 +503,15 @@ void MainScene::Render()
             SimpleMath::Vector2(320.0f, 300.0f),
             DX9::Colors::RGBA(0, 0, 0, 255),
             L"GAME CLEAR"
+        );
+    }
+
+    if (atack_count_ >= 10) {
+        DX9::SpriteBatch->DrawString(
+            tap_font_.Get(),
+            SimpleMath::Vector2(530.0f, 150.0f),
+            DX9::Colors::RGBA(0, 0, 0, 255),
+            L"B"
         );
     }
     

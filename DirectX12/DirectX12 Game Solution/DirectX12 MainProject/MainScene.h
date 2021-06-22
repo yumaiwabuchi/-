@@ -42,6 +42,7 @@ private:
     // 変数の宣言
 
     DX9::SPRITEFONT tap_font_;
+    DX9::SPRITEFONT debug_font_;
 
     DX9::SPRITE gauge_red_sprite_;
     DX9::SPRITE gauge_blue_sprite_;
@@ -76,7 +77,7 @@ private:
     const float SHARK_DOWN_LIMIT_POSITION_Y_  =      720.0f - 231.0f;
     const float SHARK_STOP_TIME_              =                 1.0f;
     const float SHARK_MOVE_SPEED_             =               300.0f;
-    const float SHARK_MOVE_SPEED_Y_           =              1500.0f;
+    const float SHARK_MOVE_SPEED_Y_           =              900.0f;
 
     // サメのHP
     const float SHARK_HP_POSITION_X_    =                   10.0f;
@@ -87,7 +88,14 @@ private:
     const float SHARK_HP_START_         =                    0.0f;
     const float SHARK_HP_DAMAGE_        =                    4.4f;
     const float SHARK_HP_DAMAGE_SLOWLY_ = SHARK_HP_DAMAGE_ * 2.0f;
+    const float SHARK_HP_DAMAGE_ATACK   =                    5.0f;
     const float SHARK_HP_HEAL_          =                   50.0f;
+
+    // サメの攻撃
+    const float SHARK_ATACK_GROW_SPEED_ = 1200.0f;
+    const float SHARK_ATACK_DECREASE_SPEED_ = 1400.0f;
+    const float SHARK_ATACK_LIMIT_SPEED_ = 700.0f;
+    const float SHARK_ATACK_TIME_ = 1.0f;
 
     // 釣り竿の動き
     const float FISHING_ROD_START_POSITION_X_       =            0.0f;
@@ -114,11 +122,12 @@ private:
     const float ANGLER_MOVE_START_POSITION_Z_ =            0.0f;
 
     // 釣り人
-    const float ANGLER_START_POSITION_X_ = 1280.0f - 60.0f;
-    const float ANGLER_START_POSITION_Y_ = 360.0f - 200.0f;
-    const float ANGLER_START_POSITION_Z_ =           -1.0f;
-    const float ANGLER_LIMIT_POSITION_Y_ = ANGLER_START_POSITION_Y_ + 400.0f;
-    const float ANGLER_POSITION_SPEED_Y_ =           5.0f;
+    const float ANGLER_START_POSITION_X_    = 1280.0f - 60.0f;
+    const float ANGLER_START_POSITION_Y_    = 360.0f - 200.0f;
+    const float ANGLER_START_POSITION_Z_    =           -1.0f;
+    const float ANGLER_LIMIT_POSITION_Y_    = ANGLER_START_POSITION_Y_ + 400.0f;
+    const float ANGLER_POSITION_SPEED_Y_    =            5.0f;
+    const float ANGLER_POSITION_SPEED_UP_Y_ =           15.0f;
 
     // つばぜり合い
     const float GAUGE_START_POSITION_X_     =   340.0f;
@@ -183,6 +192,13 @@ private:
     float shark_hp_zero_time_;
     int   shark_hp_flg_;
 
+    // サメ攻撃
+    int atack_flg_;
+    int atack_move_flg_;
+    int atack_count_;
+    float atack_time_;
+    float atack_move_y_;
+
     // 釣り竿に向かう力
     float towards_fishing_rod_speed_;
 
@@ -216,6 +232,7 @@ private:
         void GaugeUpdate      (const float deltaTime);
         void SharkUpdate      (const float deltaTime);
         void SharkHPUpdate    (const float deltaTime);
+        void SharkAtackUpdate (const float deltaTime);
         void FishingRodUpdate (const float deltaTime);
         void DeadZoneUpdate   (const float deltaTime);
         void AnglerUpdate     (const float deltaTime);
