@@ -3,6 +3,7 @@
 *.db-wal
 *.opendb
 *.ipch
+<<<<<<< HEAD
 *.exe
 *.pdb
 DirectX12/DirectX12 Game Solution/DirectXTK9/
@@ -30,3 +31,17 @@ DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_REMOTE_1938.h
 DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_REMOTE_1961.cpp
 DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_REMOTE_2018.h
 *.rej
+=======
+*.obj
+*.idb
+*.pdb
+*.tlog
+*.lastbuildstate
+*.url
+*.exe
+*.pdf
+*.ilk
+*.pch
+DirectX12/DirectX12 Game Solution/.vs/DirectX12 Game Solution/v16/.suo
+*.log
+>>>>>>> f2ea9e54b6341d0e94aa51905ce00ef8e7cf87c9
