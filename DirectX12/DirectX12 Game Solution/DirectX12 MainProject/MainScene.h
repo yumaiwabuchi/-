@@ -5,6 +5,8 @@
 #pragma once
 
 #include "Scene.h"
+#include <random>
+#include "DontDestroyOnLoad.h"
 
 using Microsoft::WRL::ComPtr;
 using std::unique_ptr;
@@ -85,6 +87,7 @@ private:
     const float COUNT_DOWN_START_           =     100.0f;
     const float COUNT_DOWN_NUMBER_          =     1.0f;
 
+    //QTEプログラム
     // 変数
     SimpleMath::Vector3 shark_position_;
     SimpleMath::Vector3 fishing_rod_position_;
@@ -106,6 +109,79 @@ private:
     int   tap_flg_;
     int   count_down_;
 
+    //背景
+    DX9::SPRITE bg_Sprite_;
+
+    //QTE 変数
+    float QTE_;
+    int QTE_No_;
+    float QTE_Time_= 0;
+    float QTE_P_;
+
+    //QTEボタン
+    int QTE_Z_1;
+    int QTE_Z_2;
+    int QTE_Z_3;
+    int QTE_Z_4;
+
+    //QTEデバッグ用
+    DX9::SPRITEFONT QTE_font_;
+
+
+    //ボタンガイド画像
+    int pattern_;
+
+    DX9::SPRITE A_;
+    DX9::SPRITE B_;
+    DX9::SPRITE X_;
+    DX9::SPRITE Y_;
+
+    //ボタン画像　Z軸
+    int A_Z;
+    int B_Z;
+    int X_Z;
+    int Y_Z;
+
+    //QTEランダムgenerator
+    std::mt19937 randomEngine_;
+    std::uniform_int_distribution<int> random_QTE_pattern_;
+
+
+    //Second_Shark_attack_プログラム
+    //変数
+    int Attack_2P_;
+    int Physical_strength_is_reduced_;
+    int Down_Human_End_;
+    
+    //attack_count
+    int Attack_count_;
+    const int three_count_ = 1;
+
+    //サメ体力
+    int Shark_Physical_strength_;
+
+    
+
+    //落下人変数
+    int Human_No_;
+    float Human_Y_Time_;
+    int Time_Flag_;
+
+    int Human_X_P_;
+    int Human_Y_P_;
+    int Human_Z_P_;
+
+    /*int Down_Human_No_;*/
+    //サメattack２button
+    DX9::SPRITE B_Attack2_;
+    //落下する人
+    DX9::SPRITE Down_Human_;
+    //落下する人　位置ランダム X
+    std::mt19937 random_Engine_;
+    std::uniform_int_distribution<int> random_Human_pattern_;
+    
+   
+
     enum FishingRodMoveDirection {
         right,
         left
@@ -114,6 +190,9 @@ private:
 // 関数
 private:
         void GaugeUpdate(const float deltaTime);
+        void AnglerattackQTEUpdate(const float deltaTime);
         void SharkUpdate(const float deltaTime);
         void FishingRodUpdate(const float deltaTime);
+        void SecondSharkattackUpdate(const float deltaTime);
+
 };

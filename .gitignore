@@ -3,3 +3,30 @@
 *.db-wal
 *.opendb
 *.ipch
+*.exe
+*.pdb
+DirectX12/DirectX12 Game Solution/DirectXTK9/
+DirectX12/DirectX12 Game Solution/DirectXTK12/
+DirectX12/DirectX12 Game Solution/DirectX12AffinityLayer/
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/x64/Debug/DirectX12 Main.tlog/CopyLocal.write.1u.tlog
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/x64/
+*.suo
+*.bak
+*.orig
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BACKUP_1881.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BACKUP_1938.h
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BACKUP_1961.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BACKUP_2018.h
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BASE_1881.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BASE_1938.h
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BASE_1961.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_BASE_2018.h
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_LOCAL_1881.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_LOCAL_1938.h
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_LOCAL_1961.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_LOCAL_2018.h
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_REMOTE_1881.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_REMOTE_1938.h
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_REMOTE_1961.cpp
+DirectX12/DirectX12 Game Solution/DirectX12 MainProject/MainScene_REMOTE_2018.h
+*.rej
