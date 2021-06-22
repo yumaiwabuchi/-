@@ -46,34 +46,83 @@ private:
     DX9::SPRITE gauge_red_sprite_;
     DX9::SPRITE gauge_blue_sprite_;
 
+    DX9::SPRITE shark_hp_empty_sprite_;
+    DX9::SPRITE shark_hp_hull_sprite_;
+
     DX9::SPRITE shark_sprite_;
+    DX9::SPRITE shark_behind_sprite_;
 
     DX9::SPRITE fishing_rod_sprite_;
 
+    DX9::SPRITE angler_sprite_;
+    DX9::SPRITE angler_move_sprite_;
+
+    DX9::SPRITE dead_zone_sprite_;
+
+    DX9::SPRITE danger_sprite_;
+
     // 定数
     
-    const float SHARK_START_POSITION_X_ = 640.0f - 200.0f;
-    const float SHARK_START_POSITION_Y_ = 400.0f ;
-    const float SHARK_START_POSITION_Z_ = 0.0f;
-    const float SHARK_RIGHT_LIMIT_POSITION_X_ = 1280.0f - 400.0f;
-    const float SHARK_LEFT_LIMIT_POSITION_X_ = 0.0f;
-    const float SHARK_UP_LIMIT_POSITION_Y_ = 0.0f;
-    const float SHARK_DOWN_LIMIT_POSITION_Y_ = 720.0f - 231.0f;
-    const float SHARK_MOVE_SPEED_ = 300.0f;
+    // サメの動き
+    const float SHARK_SIZE_X_                 =               400.0f;
+    const float SHARK_SIZE_Y_                 =               231.0f;
+    const float SHARK_SIZE_HALF_Y_            = SHARK_SIZE_Y_ / 2.0f;
+    const float SHARK_START_POSITION_X_       =      640.0f - 200.0f;
+    const float SHARK_START_POSITION_Y_       =              400.0f ;
+    const float SHARK_START_POSITION_Z_       =                 0.0f;
+    const float SHARK_RIGHT_LIMIT_POSITION_X_ =     1280.0f - 400.0f;
+    const float SHARK_LEFT_LIMIT_POSITION_X_  =                 0.0f;
+    const float SHARK_UP_LIMIT_POSITION_Y_    =                 0.0f;
+    const float SHARK_DOWN_LIMIT_POSITION_Y_  =      720.0f - 231.0f;
+    const float SHARK_STOP_TIME_              =                 1.0f;
+    const float SHARK_MOVE_SPEED_             =               300.0f;
+    const float SHARK_MOVE_SPEED_Y_           =              1500.0f;
 
-    const float FISHING_ROD_START_POSITION_X_ = 0.0f;
-    const float FISHING_ROD_START_POSITION_Y_ = 0.0f;
-    const float FISHING_ROD_START_POSITION_Z_ = 0.0f;
+    // サメのHP
+    const float SHARK_HP_POSITION_X_    =                   10.0f;
+    const float SHARK_HP_POSITION_Y_    =         360.0f - 200.0f;
+    const float SHARK_HP_POSITION_Z_    =                    0.0f;
+    const float SHARK_HP_RIGHT_LIMIT_   =                   50.0f;
+    const float SHARK_HP_DOWN_LIMIT_    =                  400.0f;
+    const float SHARK_HP_START_         =                    0.0f;
+    const float SHARK_HP_DAMAGE_        =                    4.4f;
+    const float SHARK_HP_DAMAGE_SLOWLY_ = SHARK_HP_DAMAGE_ * 2.0f;
+    const float SHARK_HP_HEAL_          =                   50.0f;
+
+    // 釣り竿の動き
+    const float FISHING_ROD_START_POSITION_X_       =            0.0f;
+    const float FISHING_ROD_START_POSITION_Y_       =            0.0f;
+    const float FISHING_ROD_START_POSITION_Z_       =            0.0f;
     const float FISHING_ROD_RIGHT_LIMIT_POSITION_X_ = 1280.0f - 40.0f;
-    const float FISHING_ROD_LEFT_LIMIT_POSITION_X_ = 0.0f;
-    const float FISHING_ROD_UP_LIMIT_POSITION_Y_ = 0.0f;
-    const float FISHING_ROD_DOWN_LIMIT_POSITION_Y_ = 720.0f - 43.0f;
-    const float FISHING_ROD_START_SPEED_ = 100.0f;
+    const float FISHING_ROD_LEFT_LIMIT_POSITION_X_  =            0.0f;
+    const float FISHING_ROD_UP_LIMIT_POSITION_Y_    =            0.0f;
+    const float FISHING_ROD_DOWN_LIMIT_POSITION_Y_  =  720.0f - 43.0f;
+    const float FISHING_ROD_START_SPEED_            =          100.0f;
 
-    const float TOWARDS_FISHING_ROD_START_SPEED_ = 200.0f;
+    // 釣り糸
+    const float FISHING_LINE_2_DIFFERENCE_ =   0.5f;
+    const float FISHING_LINE_3_DIFFERENCE_ =  -0.5f;
+    const float SHARK_LINE_DIFFERENCE_X_   = 200.0f;
+    const float SHARK_LINE_DIFFERENCE_Y_   = 115.5f;
 
-    const float GAUGE_START_POSITION_X_           =   340.0f;
-    const float GAUGE_START_POSITION_Y_           =   260.0f;
+    // 釣り竿に向かう動き
+    const float TOWARDS_FISHING_ROD_START_SPEED_ = 170.0f;
+
+    // 釣り人の位置
+    const float ANGLER_MOVE_START_POSITION_X_ = 1280.0f - 60.0f;
+    const float ANGLER_MOVE_START_POSITION_Y_ = 360.0f - 200.0f;
+    const float ANGLER_MOVE_START_POSITION_Z_ =            0.0f;
+
+    // 釣り人
+    const float ANGLER_START_POSITION_X_ = 1280.0f - 60.0f;
+    const float ANGLER_START_POSITION_Y_ = 360.0f - 200.0f;
+    const float ANGLER_START_POSITION_Z_ =           -1.0f;
+    const float ANGLER_LIMIT_POSITION_Y_ = ANGLER_START_POSITION_Y_ + 400.0f;
+    const float ANGLER_POSITION_SPEED_Y_ =           5.0f;
+
+    // つばぜり合い
+    const float GAUGE_START_POSITION_X_     =   340.0f;
+    const float GAUGE_START_POSITION_Y_     =   260.0f;
     const float GAUGE_RED_POSITION_Z_       =     0.0f;
     const float GAUGE_BLUE_POSITION_Z_      =     1.0f;
     const float GAUGE_RED_HEIGHT_START_     =   200.0f;
@@ -82,38 +131,92 @@ private:
     const float GAUGE_RED_WIDTH_ADD_SPEED_  =   210.0f;
     const float GAUGE_RED_WIDTH_TAKE_SPEED_ =  1400.0f;
 
+    // カウントダウン
     const float COUNT_DOWN_START_           =     100.0f;
-    const float COUNT_DOWN_NUMBER_          =     1.0f;
+    const float COUNT_DOWN_NUMBER_          =       1.0f;
+
+    // デッドゾーン
+    const float DEAD_ZONE_RIMIT_TIME_ =    3.0f;
+    const float DEAD_ZONE_UP_         =    0.0f;
+    const float DEAD_ZONE_DOWN_       =  100.0f;
+    const float DEAD_ZONE_RIGHT_      = 1280.0f;
+    const float DEAD_ZONE_LEFT_       =    0.0f;
+    const float DANGER_POSITION_X_    =  320.0f;
+    const float DANGER_POSITION_Y_    =  260.0f;
+    const float DANGER_POSITION_Z_    =   -1.0f;
+
+    // 体力減る速度のボーダー
+    const float SHARK_HP_DAMAGE_SPEED_BORDER_ = 410.0f;
 
     // 変数
+
+    // サメ
     SimpleMath::Vector3 shark_position_;
-    SimpleMath::Vector3 fishing_rod_position_;
-
     float shark_speed_;
+    float shark_move_time_;
+    int   shark_direction_flg_;
+    enum SharkState {
+        rightinput,
+        leftinput
+    };
 
+    // 釣り人の位置
+    SimpleMath::Vector3 angler_move_position_;
+
+    // 釣り人
+    SimpleMath::Vector3 angler_position_;
+
+    // 釣り竿
+    SimpleMath::Vector3 fishing_rod_position_;
     int fishing_rod_direction;
+    enum FishingRodMoveDirection {
+        right,
+        left
+    };
     float fishing_rod_speed_;
 
+    // サメのHP
+    float shark_hp_position_x_;
+    float shark_hp_position_y_;
+    float shark_hp_position_z_;
+    float shark_hp_;
+    float shark_hp_zero_time_;
+    int   shark_hp_flg_;
+
+    // 釣り竿に向かう力
     float towards_fishing_rod_speed_;
 
+    // つばぜり合い
     float gauge_x_;
     float gauge_y_;
     float gauge_red_z_;
     float gauge_blue_z_;
     float gauge_red_width_;
     int   gauge_display_flg;
-
     int   tap_flg_;
+
+    // カウントダウン
     int   count_down_;
 
-    enum FishingRodMoveDirection {
-        right,
-        left
-    };
+    // デッドゾーン
+    float dead_zone_time;
+    int   danger_flg;
+
+    // ゲームオーバー
+    int   game_over_flg_;
+
+    // ゲームクリア
+    int   game_clear_flg_;
+
+    // 当たり判定
+    bool  isIntersect(Rect& rect1, Rect& rect2);
 
 // 関数
 private:
-        void GaugeUpdate(const float deltaTime);
-        void SharkUpdate(const float deltaTime);
-        void FishingRodUpdate(const float deltaTime);
+        void GaugeUpdate      (const float deltaTime);
+        void SharkUpdate      (const float deltaTime);
+        void SharkHPUpdate    (const float deltaTime);
+        void FishingRodUpdate (const float deltaTime);
+        void DeadZoneUpdate   (const float deltaTime);
+        void AnglerUpdate     (const float deltaTime);
 };

@@ -1,0 +1,17 @@
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.ipch
+*.obj
+*.idb
+*.pdb
+*.tlog
+*.lastbuildstate
+*.url
+*.exe
+*.pdf
+*.ilk
+*.pch
+DirectX12/DirectX12 Game Solution/.vs/DirectX12 Game Solution/v16/.suo
+*.log
