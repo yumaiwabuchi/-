@@ -2,7 +2,12 @@
 // SceneFactory.h
 //
 
+#include "TitleScene.h"
+#include "OperationScene.h"
+#include "RuleOperationScene.h"
 #include "MainScene.h"
+#include "WinScene.h"
+#include "LossScene.h"
 
 class SceneFactory final {
 public:
@@ -10,7 +15,12 @@ public:
 	{
 		std::unique_ptr<Scene> scene;
 		switch (nextScene) {
-		case NextScene::MainScene:	scene = std::make_unique<MainScene>();	break;
+		case NextScene::TitleScene:	scene         = std::make_unique<TitleScene>();	break;
+		case NextScene::OperationScene:	scene     = std::make_unique<OperationScene>();	break;
+		case NextScene::RuleOperationScene:	scene = std::make_unique<RuleOperationScene>();	break;
+		case NextScene::MainScene:	scene         = std::make_unique<MainScene>();	break;
+		case NextScene::WinScene:	scene         = std::make_unique<WinScene>();	break;
+		case NextScene::LossScene:	scene         = std::make_unique<LossScene>();	break;
 		}
 		return scene;
 	}
