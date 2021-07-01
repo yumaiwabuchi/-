@@ -42,4 +42,6 @@ public:
 
 	virtual NextScene Update(const float deltaTime) = 0;
 	virtual void Render() = 0;
+
+	
 };
