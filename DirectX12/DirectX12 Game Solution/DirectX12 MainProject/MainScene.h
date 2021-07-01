@@ -45,9 +45,18 @@ private:
 
     // 変数の宣言
     //ゲーム制御フラグ
-    int Shark_STOP_FLAG_;
+    int shark_STOP_FLAG_;
+    const int Shark_STOP_FLAG_ = 0;
     //バック背景
     DX9::SPRITE main_bg_;
+    DX9::SPRITE main_bg_2;
+    int bgX_;
+    int bgY_;
+    int bgX2_;
+    int bgY2_;
+    int anime_bg_;
+    int bg_Flag;
+    int bg_Flag2;
 
 
     DX9::SPRITEFONT tap_font_;
@@ -238,22 +247,29 @@ private:
     bool  isIntersect(Rect& rect1, Rect& rect2);
 
     //QTEプログラム
-    // 変数
-    int QTE_Z_1;
-    int QTE_Z_2;
-    int QTE_Z_3;
-    int QTE_Z_4;
-    float QTE_;
-    float QTE_P_;
-    float QTE_Time_;
-    int QTE_No_;
-    int QTE_pattern_;
+    // 定数
+    const int QTE_Z_1 = 5;
+    const int QTE_Z_2 = 5;
+    const int QTE_Z_3 = 5;
+    const int QTE_Z_4 = 5;
+    const float QTE_ = 0.0f;
+    const float QTE_P_ = 0.0f;
+    const float QTE_Time_ = 0.0f;
+    const int QTE_No_ = 0;
+    const int QTE_pattern_ = 0;
 
+    //変数
+    int qte_z_1; int qte_z_2; int qte_z_3; int qte_z_4;
+    float qte_; float qte_p_; float qte_time_; int qte_no_; int qte_pattern_;
     
-   
-    //ボタンガイド&&画像
-    int pattern_;
+    int pattern2_; int qte_serect2_; int qte_push_button_;
+    int qte_time_flg_; float push_button_; int pattern_;
     int button_Instruct_;
+
+
+    //ボタンガイド&&画像
+    const int Pattern_ = 0;
+    const int Button_Instruct_ = 0;
     DX9::SPRITEFONT QTE_font_;
    
     DX9::SPRITE A_;
@@ -262,8 +278,8 @@ private:
     DX9::SPRITE Y_;
 
     //ボタン画像　Z軸
-    int A_Z; int B_Z; int X_Z; int Y_Z;
-
+    const int A_Z = 5; const int B_Z = 5; const int X_Z = 5; const int Y_Z = 5;
+    int a_z; int b_z; int x_z; int y_z;
     //QTEランダムgenerator
     std::mt19937 randomEngine_;
     std::uniform_int_distribution<int> random_QTE_pattern_;
@@ -320,20 +336,33 @@ private:
 
 
     //追加QTE変数
-    int QTE_serect2_;
-    int QTE_push_button_;
-    int pattern2_;
-    float push_button_;
+    const int QTE_serect2_ = 0;
+    const int QTE_push_button_ = 0;
+    const int Pattern2_ = 0;
+    const float Push_button_ = 0.0f;
 
-    int QTE_Flg_;
-    int QTE_Time_Flg_;
+    const int QTE_Flg_ = 0;
+    const int QTE_Time_Flg_ = 0;
     //４パターン×5
-    int A_Z1; int A_Z2; int A_Z3; int A_Z4; int A_Z5;
-    int B_Z1; int B_Z2; int B_Z3; int B_Z4; int B_Z5;
-    int X_Z1; int X_Z2; int X_Z3; int X_Z4; int X_Z5;
-    int Y_Z1; int Y_Z2; int Y_Z3; int Y_Z4; int Y_Z5;
+    const int A_Z1 = 50; const int A_Z2 = 50; const int A_Z3 = 50; const int A_Z4 = 50; const int A_Z5 = 50;
+    const int B_Z1 = 50; const int B_Z2 = 50; const int B_Z3 = 50; const int B_Z4 = 50; const int B_Z5 = 50;
+    const int X_Z1 = 50; const int X_Z2 = 50; const int X_Z3 = 50; const int X_Z4 = 50; const int X_Z5 = 50;
+    const int Y_Z1 = 50; const int Y_Z2 = 50; const int Y_Z3 = 50; const int Y_Z4 = 50; const int Y_Z5 = 50;
 
+    int a_z1; int a_z2; int a_z3; int a_z4; int a_z5;
+    int b_z1; int b_z2; int b_z3; int b_z4; int b_z5;
+    int x_z1; int x_z2; int x_z3; int x_z4; int x_z5;
+    int y_z1; int y_z2; int y_z3; int y_z4; int y_z5;
     
+    
+    const int push_button_1 = 1;
+    const int push_button_2 = 2;
+    const int push_button_3 = 3;    
+    const int push_button_4 = 4;
+    const int push_button_5 = 5;
+
+
+
 
 // 関数
 private:
@@ -344,7 +373,7 @@ private:
         void FishingRodUpdate (const float deltaTime);
         void DeadZoneUpdate   (const float deltaTime);
         void AnglerUpdate     (const float deltaTime);
-        void QTEUpdate        (const float deltaTime);
+
         void SharkAtack2Update(const float deltaTime);
         void QTEUpdate2       (const float deltaTime);
 };

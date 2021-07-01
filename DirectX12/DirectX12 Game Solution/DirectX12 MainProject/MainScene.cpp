@@ -18,7 +18,16 @@ MainScene::MainScene() : dx9GpuDescriptor{}
 void MainScene::Initialize()
 {
     //全プログラム制御フラグ
-    Shark_STOP_FLAG_ = 0; //(int)
+    shark_STOP_FLAG_ = Shark_STOP_FLAG_; //(int)
+
+    //背景アニメーション
+    bgX_ =   0;
+    bgY_ = 720;
+    bgX2_ = 0;
+    bgY2_ = 7200;
+    bg_Flag  = 0;
+    bg_Flag2 = 0;
+    anime_bg_ = 0;
 
     shark_position_.x = SHARK_START_POSITION_X_;
     shark_position_.y = SHARK_START_POSITION_Y_;
@@ -81,26 +90,26 @@ void MainScene::Initialize()
     game_clear_flg_ = 0;
 
     //QTE 指示
-    button_Instruct_ = 0;
+    button_Instruct_ = Button_Instruct_;
     //QTE
-    QTE_ = 0.0f;
-    QTE_Time_ = 0.0f;
-    QTE_No_ = 0;
+    qte_ = QTE_;
+    qte_time_ = QTE_Time_;
+    qte_no_ = QTE_No_;
 
-    QTE_Z_1 = 5;
-    QTE_Z_2 = 5;
-    QTE_Z_3 = 5;
-    QTE_Z_4 = 5;
+    qte_z_1 = QTE_Z_1;
+    qte_z_2 = QTE_Z_2;
+    qte_z_3 = QTE_Z_3;
+    qte_z_4 = QTE_Z_4;
     
-    A_Z = 5;
-    B_Z = 5;
-    X_Z = 5;
-    Y_Z = 5;
+    a_z = A_Z;
+    b_z = B_Z;
+    x_z = X_Z;
+    y_z = Y_Z;
     //QTE
-    pattern_ = 0;
+    pattern_ = Pattern_;
     //QTE
     random_QTE_pattern_ = std::uniform_int_distribution<int>(1, 4);
-    QTE_pattern_ = 0;
+    qte_pattern_ = QTE_pattern_;
 
     //secondサメ攻撃
     fishing_rod_size_x_ = FISHING_ROD_SIZE_X_;
@@ -128,15 +137,16 @@ void MainScene::Initialize()
 
     //QTE2初期化
     pattern2_ = 0;
-    QTE_serect2_ = 0;
-    QTE_push_button_ = 0;
-    QTE_Time_Flg_ = 0;
-    push_button_ = 0.0f;
+    qte_serect2_ = QTE_serect2_;
+    qte_push_button_ = QTE_push_button_;
+    qte_time_flg_ = QTE_Time_Flg_;
+    push_button_ = Push_button_;
+    qte_p_ = QTE_P_;
 
-    A_Z1 = 50; A_Z2 = 50; A_Z3 = 50; A_Z4 = 50; A_Z5 = 50;
-    B_Z1 = 50; B_Z2 = 50; B_Z3 = 50; B_Z4 = 50; B_Z5 = 50;
-    X_Z1 = 50; X_Z2 = 50; X_Z3 = 50; X_Z4 = 50; X_Z5 = 50;
-    Y_Z1 = 50; Y_Z2 = 50; Y_Z3 = 50; Y_Z4 = 50; Y_Z5 = 50;
+    a_z1 = A_Z1; a_z2 = A_Z2; a_z3 = A_Z3; a_z4 = A_Z4; a_z5 = A_Z5;
+    b_z1 = B_Z1; b_z2 = B_Z2; b_z3 = B_Z3; b_z4 = B_Z4; b_z5 = B_Z5;
+    x_z1 = X_Z1; x_z2 = X_Z2; x_z3 = X_Z3; x_z4 = X_Z4; x_z5 = X_Z5;
+    y_z1 = Y_Z1; y_z2 = Y_Z2; y_z3 = Y_Z3; y_z4 = Y_Z4; y_z5 = Y_Z5;
 }
 
 // Allocate all memory the Direct3D and Direct2D resources.
@@ -186,10 +196,10 @@ void MainScene::LoadAssets()
     danger_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Danger.png");
 
     //QTEボタン画像
-    A_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"A.png");
-    B_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"B.png");
-    X_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"X.png");
-    Y_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Y.png");
+    A_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.A.png");
+    B_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.B.png");
+    X_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.X.png");
+    Y_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.Y.png");
     //QTEデバッグ用font
     QTE_font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ゴシック", 30);
 
@@ -197,8 +207,8 @@ void MainScene::LoadAssets()
     Down_Human_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"落下する人.png");
 
     //バック背景
-    main_bg_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"blue_bg.png");
-
+    main_bg_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Haikei_A2.png");
+    main_bg_2 = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Haikei_A.png");
 }
 
 // Releasing resources required for termination.
@@ -231,13 +241,13 @@ NextScene MainScene::Update(const float deltaTime)
 
     // TODO: Add your game logic here.
 
-    SharkUpdate      (deltaTime);
-    FishingRodUpdate (deltaTime);
-    DeadZoneUpdate   (deltaTime);
-    AnglerUpdate     (deltaTime);
-    /*QTEUpdate        (deltaTime);*/
+    SharkUpdate(deltaTime);
+    FishingRodUpdate(deltaTime);
+    DeadZoneUpdate(deltaTime);
+    AnglerUpdate(deltaTime);
+
     SharkAtack2Update(deltaTime);
-    QTEUpdate2       (deltaTime);
+    QTEUpdate2(deltaTime);
 
     if (DXTK->KeyEvent->pressed.T) {
         if (gauge_display_flg == 0) {
@@ -255,14 +265,48 @@ NextScene MainScene::Update(const float deltaTime)
     //サメZ_position_
     shark_position_.z = -20;
 
-    
-    //QTE
-    QTE_P_ = shark_position_.y;
 
-    if (QTE_P_ >= 180) {
-        QTE_ += deltaTime;
+    //QTE
+    qte_p_ = shark_position_.y;
+
+    
+        if (qte_p_ >= 180) {
+            qte_ += 1 * deltaTime;
+        }
+    
+    //背景
+    
+
+    /*if (bg_Flag == 0) {
+        bgX_ += 1280;
+
+        if (bgX_ >= 14080 && bgY_ <= 6480) {
+            bgX_ = 0;
+            bgY_ += 720;
+        }
+
+        if (bgX_ >= 14080 && bgY_ == 7200) {
+            bgX_ = 0;
+            bgY_ = 720;
+            bg_Flag = 1;
+        }
     }
 
+    if (bg_Flag == 1) {
+        bgX2_ += 1280;
+
+        if (bgX2_ >= 14080 && bgY2_ <= 7200) {
+            bgX2_ = 0;
+            bgY2_ += 720;
+        }
+
+        if (bgX2_ >= 14080 && bgY2_ == 14400) {
+            bgX2_ = 0;
+            bgY2_ = 7200;
+            bg_Flag = 0;
+        }
+    }*/
+    
     
     
     
@@ -272,7 +316,7 @@ NextScene MainScene::Update(const float deltaTime)
 
 void MainScene::SharkUpdate(const float deltaTime)
 {
-    if (Shark_STOP_FLAG_ == 0) {
+    if (shark_STOP_FLAG_ == 0) {
 
         constexpr float SPEED = 300.0f;
         const float SQUARE_X = DXTK->GamePadState[0].thumbSticks.leftX;
@@ -348,7 +392,7 @@ void MainScene::SharkUpdate(const float deltaTime)
 
 void MainScene::SharkAtackUpdate(const float deltaTime)
 {
-    if (Shark_STOP_FLAG_ == 0) {
+    if (shark_STOP_FLAG_ == 0) {
         if (atack_count_ >= 1) {
             atack_time_ += deltaTime;
             if (atack_time_ >= SHARK_ATACK_TIME_) {
@@ -390,7 +434,7 @@ void MainScene::SharkAtackUpdate(const float deltaTime)
 
 void MainScene::SharkHPUpdate(const float deltaTime)
 {
-    if (Shark_STOP_FLAG_ == 0) {
+    if (shark_STOP_FLAG_ == 0) {
         if (shark_hp_ <= 0.0f) {
             shark_hp_ = 0.0f;
         }
@@ -452,7 +496,7 @@ void MainScene::AnglerUpdate(const float deltaTime)
 
 void MainScene::GaugeUpdate(const float deltaTime)
 {
-    if (Shark_STOP_FLAG_ == 0) {
+    if (shark_STOP_FLAG_ == 0) {
         // 赤ゲージ
         gauge_red_width_ += GAUGE_RED_WIDTH_ADD_SPEED_ * deltaTime;
 
@@ -499,132 +543,132 @@ void MainScene::DeadZoneUpdate(const float deltaTime)
     }
 }
 
-void MainScene::QTEUpdate(const float deltaTime)
-{
-    if (QTE_ >= 10.0f) {
-        //QTEランダム
-        QTE_pattern_ = random_QTE_pattern_(randomEngine_);
-        QTE_ -= 10.0f;
-
-    }
-
-    //QTE(4)パターン
-    if (QTE_pattern_ == 1) {
-        Shark_STOP_FLAG_ = 1;
-        pattern_ = 1;
-        QTE_Time_ += deltaTime;
-
-        if (QTE_Time_ <= 1.8f) {
-            if (DXTK->GamePadState[0].IsAPressed() && DXTK->GamePadState[0].IsBPressed()) {
-                Shark_STOP_FLAG_ = 0;
-                pattern_ = 0;
-                QTE_pattern_ = 0.0f;
-                QTE_Time_ = 0.0f;
-            }
-        }
-
-        if (QTE_Time_ >= 1.8f) {
-            Shark_STOP_FLAG_ = 0;
-            pattern_ = 0;
-            shark_position_.y -= 7;
-
-            DXTK->GamePadVibration(0, 0.5f, 0.5f);
-
-        }
-
-    }
-
-    if (QTE_pattern_ == 2) {
-        Shark_STOP_FLAG_ = 1;
-        pattern_ = 2;
-        QTE_Time_ += deltaTime;
-
-        if (QTE_Time_ <= 1.8f) {
-            if (DXTK->GamePadState[0].IsBPressed() && DXTK->GamePadState[0].IsYPressed()) {
-                Shark_STOP_FLAG_ = 0;
-                pattern_ = 0;
-                QTE_pattern_ = 0;
-                QTE_Time_ = 0.0f;
-            }
-
-        }
-
-        if (QTE_Time_ >= 1.8f) {
-            Shark_STOP_FLAG_ = 0;
-            pattern_ = 0;
-            shark_position_.y -= 7;
-
-            DXTK->GamePadVibration(0, 0.5f, 0.5f);
-
-        }
-    }
-
-    if (QTE_pattern_ == 3) {
-        Shark_STOP_FLAG_ = 1;
-        pattern_ = 3;
-        QTE_Time_ += deltaTime;
-
-        if (QTE_Time_ <= 1.8f) {
-            if (DXTK->GamePadState[0].IsXPressed() && DXTK->GamePadState[0].IsAPressed()) {
-                Shark_STOP_FLAG_ = 0;
-                pattern_ = 0;
-                QTE_pattern_ = 0;
-                QTE_Time_ = 0.0f;
-            }
-
-        }
-
-        if (QTE_Time_ >= 1.8f) {
-            Shark_STOP_FLAG_ = 0;
-            pattern_ = 0;
-            shark_position_.y -= 7;
-
-            DXTK->GamePadVibration(0, 0.5f, 0.5f);
-        }
-    }
-
-    if (QTE_pattern_ == 4) {
-        Shark_STOP_FLAG_ = 1;
-        pattern_ = 4;
-        QTE_Time_ += deltaTime;
-
-        if (QTE_Time_ <= 1.8f) {
-            if (DXTK->GamePadState[0].IsYPressed() && DXTK->GamePadState[0].IsXPressed()) {
-
-                Shark_STOP_FLAG_ = 0;
-                pattern_ = 0;
-                QTE_pattern_ = 0;
-                QTE_Time_ = 0.0f;
-            }
-
-        }
-
-        if (QTE_Time_ >= 1.8f) {
-            Shark_STOP_FLAG_ = 0;
-            pattern_ = 0;
-            shark_position_.y -= 7;
-            DXTK->GamePadVibration(0, 0.5f, 0.5f);
-
-        }
-    }
-
-    if (QTE_Time_ >= 2.3f) {
-        pattern_ = 0;
-        QTE_Time_ = 0.0f;
-        QTE_pattern_ = 0;
-        DXTK->GamePadVibration(0, 0.0f, 0.0f);
-    }
-
-    if (pattern_ == 0) {
-
-        A_Z = 45;
-        B_Z = 45;
-        X_Z = 45;
-        Y_Z = 45;
-
-    }
-
-}
+//void MainScene::QTEUpdate(const float deltaTime)
+//{
+//    if (qte_ >= 10.0f) {
+//        //QTEランダム
+//        qte_pattern_ = random_QTE_pattern_(randomEngine_);
+//        qte_ -= 10.0f;
+//
+//    }
+//
+//    //QTE(4)パターン
+//    if (qte_pattern_ == 1) {
+//        shark_STOP_FLAG_ = 1;
+//        pattern_ = 1;
+//        qte_time_ += deltaTime;
+//
+//        if (qte_time_ <= 1.8f) {
+//            if (DXTK->GamePadState[0].IsAPressed() && DXTK->GamePadState[0].IsBPressed()) {
+//                shark_STOP_FLAG_ = 0;
+//                pattern_ = 0;
+//                qte_pattern_ = 0.0f;
+//                qte_time_ = 0.0f;
+//            }
+//        }
+//
+//        if (qte_time_ >= 1.8f) {
+//            shark_STOP_FLAG_ = 0;
+//            pattern_ = 0;
+//            shark_position_.y -= 7;
+//
+//            DXTK->GamePadVibration(0, 0.5f, 0.5f);
+//
+//        }
+//
+//    }
+//
+//    if (qte_pattern_ == 2) {
+//        shark_STOP_FLAG_ = 1;
+//        pattern_ = 2;
+//        qte_time_ += deltaTime;
+//
+//        if (qte_time_ <= 1.8f) {
+//            if (DXTK->GamePadState[0].IsBPressed() && DXTK->GamePadState[0].IsYPressed()) {
+//                shark_STOP_FLAG_ = 0;
+//                pattern_ = 0;
+//                qte_pattern_ = 0;
+//                qte_time_ = 0.0f;
+//            }
+//
+//        }
+//
+//        if (qte_time_ >= 1.8f) {
+//            shark_STOP_FLAG_ = 0;
+//            pattern_ = 0;
+//            shark_position_.y -= 7;
+//
+//            DXTK->GamePadVibration(0, 0.5f, 0.5f);
+//
+//        }
+//    }
+//
+//    if (qte_pattern_ == 3) {
+//        shark_STOP_FLAG_ = 1;
+//        pattern_ = 3;
+//        qte_time_ += deltaTime;
+//
+//        if (qte_time_ <= 1.8f) {
+//            if (DXTK->GamePadState[0].IsXPressed() && DXTK->GamePadState[0].IsAPressed()) {
+//                shark_STOP_FLAG_ = 0;
+//                pattern_ = 0;
+//                qte_pattern_ = 0;
+//                qte_time_ = 0.0f;
+//            }
+//
+//        }
+//
+//        if (qte_time_ >= 1.8f) {
+//            shark_STOP_FLAG_ = 0;
+//            pattern_ = 0;
+//            shark_position_.y -= 7;
+//
+//            DXTK->GamePadVibration(0, 0.5f, 0.5f);
+//        }
+//    }
+//
+//    if (qte_pattern_ == 4) {
+//        shark_STOP_FLAG_ = 1;
+//        pattern_ = 4;
+//        qte_time_ += deltaTime;
+//
+//        if (qte_time_ <= 1.8f) {
+//            if (DXTK->GamePadState[0].IsYPressed() && DXTK->GamePadState[0].IsXPressed()) {
+//
+//                shark_STOP_FLAG_ = 0;
+//                pattern_ = 0;
+//                qte_pattern_ = 0;
+//                qte_time_ = 0.0f;
+//            }
+//
+//        }
+//
+//        if (qte_time_ >= 1.8f) {
+//            shark_STOP_FLAG_ = 0;
+//            pattern_ = 0;
+//            shark_position_.y -= 7;
+//            DXTK->GamePadVibration(0, 0.5f, 0.5f);
+//
+//        }
+//    }
+//
+//    if (qte_time_ >= 2.3f) {
+//        pattern_ = 0;
+//        qte_time_ = 0.0f;
+//        qte_pattern_ = 0;
+//        DXTK->GamePadVibration(0, 0.0f, 0.0f);
+//    }
+//
+//    if (pattern_ == 0) {
+//
+//        a_z = 45;
+//        a_z = 45;
+//        x_z = 45;
+//        y_z = 45;
+//
+//    }
+//
+//}
 
 void MainScene::SharkAtack2Update(const float deltaTime)
 {
@@ -736,42 +780,41 @@ void MainScene::SharkAtack2Update(const float deltaTime)
 
 void MainScene::QTEUpdate2(const float deltaTime)
 {
-    if (QTE_ >= 20.0f) {
+    if (qte_ >= 5.0f) {
         //QTEセレクト
-        QTE_serect2_ = 1;
-        
-        QTE_ -= 20.0f;
+        qte_serect2_ = 1;
+        qte_ = 0.0f;
     }
 
-    if (QTE_serect2_ == 1) {
-        Shark_STOP_FLAG_ = 1;
+    if (qte_serect2_ == 1) {
+        shark_STOP_FLAG_ = 1;
 
-        QTE_Time_ += deltaTime;
+        
         
         if (shark_position_.x <= 620 && shark_position_.y <= 350) {
             pattern2_ = 1;
-            A_Z1 = -34; A_Z2 = -33; A_Z3 = -32; A_Z4 = -31; A_Z5 = -30;
+            a_z1 = -34; a_z2 = -33; a_z3 = -32; a_z4 = -31; a_z5 = -30;
 
             button_Instruct_ = 1;
         }
 
         if (shark_position_.x >= 621 && shark_position_.y <= 351) {
             pattern2_ = 2;
-            B_Z1 = -34; B_Z2 = -33; B_Z3 = -32; B_Z4 = -31; B_Z5 = -30;
+            b_z1 = -34; b_z2 = -33; b_z3 = -32; b_z4 = -31; b_z5 = -30;
 
             button_Instruct_ = 1;
         }
 
         if (shark_position_.x <= 620 && shark_position_.y >= 350) {
             pattern2_ = 3;
-            X_Z1 = -34; X_Z2 = -33; X_Z3 = -32; X_Z4 = -31; X_Z5 = -30;
+            x_z1 = -34; x_z2 = -33; x_z3 = -32; x_z4 = -31; x_z5 = -30;
 
             button_Instruct_ = 1;
         }
 
         if (shark_position_.x >= 621 && shark_position_.y >= 351){
             pattern2_ = 4;
-            Y_Z1 = -34; Y_Z2 = -33; Y_Z3 = -32; Y_Z4 = -31; Y_Z5 = -30;
+            y_z1 = -34; y_z2 = -33; y_z3 = -32; y_z4 = -31; y_z5 = -30;
             
             button_Instruct_ = 1;
         }
@@ -783,137 +826,128 @@ void MainScene::QTEUpdate2(const float deltaTime)
     //QTE(4)パターン
 
     if (pattern2_ == 1) {
-        QTE_serect2_ = 0;
+        qte_serect2_ = 0;
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
+            
+        if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+            qte_serect2_ = 0;
+            a_z1 = 50;
+            /*qte_push_button_ = 1;*/
+        }
         
-        QTE_Time_ += deltaTime;
+        if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
+            qte_push_button_ += 1;
+        }
+
+        /*if(DXTK->KeyEvent->pressed.Up) {
+            qte_serect2_ = 0;
+            a_z1 = 50;
+            qte_push_button_ = push_button_1;
+        }*/
+
+
+        if (qte_push_button_ == 1) {
+            
+            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED /*, DXTK->KeyEvent->pressed.Up*/) {
+                a_z2 = 50;
+                /*qte_push_button_ = 2;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 2) {
+            
+            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
+                a_z3 = 50;
+                /*qte_push_button_ = 3;*/
+            }
+            
+        }
+
+        if (qte_push_button_ == 3) {
+            
+            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
+                a_z4 = 50;
+                /*qte_push_button_ = 4;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 4) {
             
                 if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-                    A_Z1 = 150;
-                    
-                }
-
-                if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED, DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED, DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED, DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
-
-                    QTE_push_button_ += 1;
-                }
-            
-        
-
-        if (QTE_push_button_ == 1) {
-            
-            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-                A_Z2 = 150;
-
-            }
-
-            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-
-                QTE_push_button_ += 1;
-            }
-            
-        }
-
-        if (QTE_push_button_ == 2) {
-            
-            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-                A_Z3 = 150;
-
-            }
-
-            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-
-                QTE_push_button_ += 1;
-            }
-            
-        }
-
-        if (QTE_push_button_ == 3) {
-            
-            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-                A_Z4 = 150;
-
-            }
-
-            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-
-                QTE_push_button_ += 1;
-            }
-            
-        }
-
-        if (QTE_push_button_ == 4) {
-            
-                if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-                    A_Z5 = 150;
-                    Shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
-                    
-                    QTE_pattern_ = 0.0f;
-                    QTE_Time_ = 0.0f;
+                    a_z5 = 50;
+                    shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+                    /*qte_push_button_ = 5;*/
+                    qte_pattern_ = 0.0f;
+                    qte_time_ = 0.0f;
                     pattern2_ = 0;
                 }
 
-                if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
-
-                    QTE_push_button_ += 1;
-                }
-            
         }
 
     }
 
     if (pattern2_ == 2) {
-        QTE_serect2_ = 0;
-        
-        QTE_Time_ += deltaTime;
+        qte_serect2_ = 0;
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
 
             
-                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
-                    B_Z1 = 150;
-                    
+                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+                    qte_serect2_ = 0;
+                    b_z1 = 50;
+                    /*qte_push_button_ = 1;*/
                 }
+
+                /*if (DXTK->KeyEvent->pressed.Right) {
+                    qte_serect2_ = 0;
+                    b_z1 = 50;
+                    qte_push_button_ = push_button_1;
+                }*/
             
                 if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
-
-                    QTE_push_button_ += 1;
+                    qte_push_button_ += 1;
                 }
         
 
-        if (QTE_push_button_ == 1) {
+        if (qte_push_button_ == 1) {
             
-                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
-                    B_Z2 = 150;
-                   
+                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED ) {
+                    b_z2 = 50;
+                    /*qte_push_button_ = 2;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 2) {
+        if (qte_push_button_ == 2) {
             
-                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
-                    B_Z3 = 150;
-                   
+                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED ) {
+                    b_z3 = 50;
+                    /*qte_push_button_ = 3;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 3) {
+        if (qte_push_button_ == 3) {
            
-                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
-                    B_Z4 = 150;
-                    
+                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED ) {
+                    b_z4 = 50;
+                    /*qte_push_button_ = 4;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 4) {
+        if (qte_push_button_ == push_button_4) {
             
-                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
-                    B_Z5 = 150;
-                    Shark_STOP_FLAG_ = 0; pattern2_ = 0;
+                if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED ) {
+                    b_z5 = 50;
+                    shark_STOP_FLAG_ = 0; pattern2_ = 0;
                     button_Instruct_ = 0; 
-                    
-                    QTE_pattern_ = 0.0f;
-                    QTE_Time_ = 0.0f;
+                    /*qte_push_button_ = 5;*/
+                    qte_pattern_ = 0.0f;
+                    qte_time_ = 0.0f;
                 }
             
         }
@@ -921,60 +955,61 @@ void MainScene::QTEUpdate2(const float deltaTime)
     }
 
     if (pattern2_ == 3) {
-        QTE_serect2_ = 0;
+        qte_serect2_ = 0;
         
-        
-        QTE_Time_ += deltaTime;
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
         
         
             
+                if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+                    qte_serect2_ = 0;
+                    x_z1 = 50; 
+                    /*qte_push_button_ = 1;*/
+                }
+
                 if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
-                    X_Z1 = 150; 
-                    
+                    qte_push_button_ += 1;
                 }
             
-                if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
+                
 
-                    QTE_push_button_ += 1;
-                }
-        
-
-        if (QTE_push_button_ == 1) {
+        if (qte_push_button_ == 1) {
             
                 if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
-                    X_Z2 = 150;
-                    
-                }
-            
-        }
-
-        if (QTE_push_button_ == 2) {
-            
-                if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
-                    X_Z3 = 150;
-                    
+                    x_z2 = 50;
+                    /*qte_push_button_ = 2;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 3) {
+        if (qte_push_button_ == 2) {
+            
+            if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
+                x_z3 = 50;
+                /*qte_push_button_ = 3;*/
+            }
+            
+        }
+
+        if (qte_push_button_ == 3) {
             
                 if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
-                    X_Z4 = 150;
-                    
+                    x_z4 = 50;
+                   /* qte_push_button_ = 4;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 4) {
+        if (qte_push_button_ == 4) {
             
                 if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
-                    X_Z5 = 150;
-                    Shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+                    x_z5 = 50;
+                    shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
                     pattern2_ = 0;
-                    
-                    QTE_pattern_ = 0.0f;
-                    QTE_Time_ = 0.0f;
+                    /*qte_push_button_ = 5;*/
+                    qte_pattern_ = 0.0f;
+                    qte_time_ = 0.0f;
                 }
             
         }
@@ -982,101 +1017,108 @@ void MainScene::QTEUpdate2(const float deltaTime)
     }
 
     if (pattern2_ == 4) {
-        QTE_serect2_ = 4;
-        
-        QTE_Time_ += deltaTime;
+        qte_serect2_ = 0;
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
 
-       
-            
-                if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
-                    Y_Z1 = 150;
-                    
-                    
+
+                if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+                    qte_serect2_ = 0;
+                    y_z1 = 50;
+                    /*qte_push_button_ = 1;*/
                 }
 
                 if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
-
-                    QTE_push_button_ += 1;
+                    qte_push_button_ += 1;
                 }
-            
-        
+                
 
-        if (QTE_push_button_ == 1) {
+        if (qte_push_button_ == 1) {
             
                 if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
-                    Y_Z2 = 150;
-                    
+                    y_z2 = 50;
+                    /*qte_push_button_ = 2;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 2) {
+        if (qte_push_button_ == 2) {
             
                 if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
-                    Y_Z3 = 150;
-                    
+                    y_z3 = 50;
+                    /*qte_push_button_ = 3;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 3) {
+        if (qte_push_button_ == 3) {
             
                 if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
-                    Y_Z4 = 150;
-                    
+                    y_z4 = 50;
+                   /* qte_push_button_ = 4;*/
                 }
             
         }
 
-        if (QTE_push_button_ == 4) {
+        if (qte_push_button_ == 4) {
             
                 if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
-                    Y_Z5 = 150;
-                    Shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+                    y_z5 = 50;
+                    shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
                     pattern2_ = 0;
-                    
-                    QTE_pattern_ = 0.0f;
-                    QTE_Time_ = 0.0f;
+                    /*qte_push_button_ = 5;*/
+                    qte_pattern_ = 0.0f;
+                    qte_time_ = 0.0f;
                 }
             
         }
 
     }
 
-    
-
-
-    if (QTE_Time_ >= 1.8f) {
-        Shark_STOP_FLAG_ = 0;
+    if (qte_push_button_ == 5) {
+        shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+        pattern2_ = 0;
         
-        shark_position_.y -= 7;
+        qte_pattern_ = 0.0f;
+        qte_time_ = 0.0f;
+    }
+
+    if (pattern2_ == 0) {
+
+        qte_push_button_ = 0;
+    }
+
+    if (qte_time_ >=1.3f) {
+        shark_STOP_FLAG_ = 0;
+        qte_push_button_ = 0;
+        shark_position_.y -= 10;
         push_button_ += deltaTime;
         DXTK->GamePadVibration(0, 0.6f, 0.6f);
         
     }
         
 
-    if (push_button_ >= 0.6f) {
+    if (push_button_ >= 0.8f) {
         DXTK->GamePadVibration(0, 0.0f, 0.0f);
-        
+        qte_pattern_ = 0;
     }
 
-    if (QTE_Time_ >= 2.3f) {
+    if (qte_time_ >= 2.0f) {
         button_Instruct_ = 0;
         push_button_ = 0.0f;
         pattern2_ = 0;
-        QTE_push_button_ = 0;
-        QTE_pattern_ = 0;
-        QTE_Time_Flg_ = 1;
-        QTE_Time_ = 0.0f;
+        qte_push_button_ = 0;
+        
+        qte_time_flg_ = 1;
+        qte_time_ = 0.0f;
     }
 
     if (pattern2_ == 0) {
         
-        A_Z1 = 50; A_Z2 = 50; A_Z3 = 50; A_Z4 = 50; A_Z5 = 50;
-        B_Z1 = 50; B_Z2 = 50; B_Z3 = 50; B_Z4 = 50; B_Z5 = 50;
-        X_Z1 = 50; X_Z2 = 50; X_Z3 = 50; X_Z4 = 50; X_Z5 = 50;
-        Y_Z1 = 50; Y_Z2 = 50; Y_Z3 = 50; Y_Z4 = 50; Y_Z5 = 50;
+        a_z1 = 50; a_z2 = 50; a_z3 = 50; a_z4 = 50; a_z5 = 50;
+        b_z1 = 50; b_z2 = 50; b_z3 = 50; b_z4 = 50; b_z5 = 50;
+        x_z1 = 50; x_z2 = 50; x_z3 = 50; x_z4 = 50; x_z5 = 50;
+        y_z1 = 50; y_z2 = 50; y_z3 = 50; y_z4 = 50; y_z5 = 50;
 
     }
 
@@ -1113,7 +1155,7 @@ void MainScene::Render()
 
     DX9::SpriteBatch->Begin();
 
-    DX9::SpriteBatch->DrawSimple(dead_zone_sprite_.Get(), SimpleMath::Vector3(0.0f, 0.0f, 0.0f));
+    /*DX9::SpriteBatch->DrawSimple(dead_zone_sprite_.Get(), SimpleMath::Vector3(0.0f, 0.0f, 0.0f));*/
 
     if (danger_flg == 1) {
         DX9::SpriteBatch->DrawSimple(danger_sprite_.Get(), SimpleMath::Vector3(DANGER_POSITION_X_, DANGER_POSITION_Y_, DANGER_POSITION_Z_));
@@ -1136,6 +1178,8 @@ void MainScene::Render()
         SimpleMath::Vector3(shark_hp_position_x_, (int)shark_hp_position_y_, shark_hp_position_z_),
         Rect(0.0f, shark_hp_, SHARK_HP_RIGHT_LIMIT_, (int)SHARK_HP_DOWN_LIMIT_)
     );
+    
+
 
     if (gauge_display_flg == 1) {
         DX9::SpriteBatch->DrawSimple(
@@ -1210,8 +1254,8 @@ void MainScene::Render()
     //QTE
     if (pattern_ == 1) {
 
-        A_Z = -10;
-        B_Z = -10;
+        a_z = -10;
+        b_z = -10;
 
         DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(550, 350, A_Z));
         DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(670, 350, B_Z));
@@ -1219,8 +1263,8 @@ void MainScene::Render()
 
     if (pattern_ == 2) {
 
-        B_Z = -10;
-        Y_Z = -10;
+        b_z = -10;
+        y_z = -10;
 
         DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(550, 350, B_Z));
         DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(670, 350, Y_Z));
@@ -1228,8 +1272,8 @@ void MainScene::Render()
 
     if (pattern_ == 3) {
 
-        A_Z = -10;
-        X_Z = -10;
+        a_z = -10;
+        x_z = -10;
 
         DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(550, 350, A_Z));
         DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(670, 350, X_Z));
@@ -1237,24 +1281,25 @@ void MainScene::Render()
 
     if (pattern_ == 4) {
 
-        X_Z = -10;
-        Y_Z = -10;
+        x_z = -10;
+        y_z = -10;
 
         DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(550, 350, X_Z));
         DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(670, 350, Y_Z));
     }
 
     //QTE２
+    
     if (pattern2_ == 1) {
-
         /*A_Z1 = -14; A_Z2 = -13; A_Z3 = -12; A_Z4 = -11; A_Z5 = -10;*/
-        
 
-        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(500, 320, A_Z1));
-        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(530, 320, A_Z2));
-        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(550, 320, A_Z3));
-        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(580, 320, A_Z4));
-        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(600, 320, A_Z5));
+
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(500, 320, a_z1));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(530, 320, a_z2));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(560, 320, a_z3));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(590, 320, a_z4));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(620, 320, a_z5));
+
     }
 
     if (pattern2_ == 2) {
@@ -1262,35 +1307,39 @@ void MainScene::Render()
         /*B_Z1 = -14; B_Z2 = -13; B_Z3 = -12; B_Z4 = -11; B_Z5 = -10;*/
 
 
-        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(500, 320, B_Z1));
-        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(530, 320, B_Z2));
-        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(550, 320, B_Z3));
-        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(580, 320, B_Z4));
-        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(600, 320, B_Z5));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(500, 320, b_z1));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(530, 320, b_z2));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(560, 320, b_z3));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(590, 320, b_z4));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(620, 320, b_z5));
+
     }
+
 
     if (pattern2_ == 3) {
 
         /*X_Z1 = -14; X_Z2 = -13; X_Z3 = -12; X_Z4 = -11; X_Z5 = -10;*/
 
 
-        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 300, X_Z1));
-        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 330, X_Z2));
-        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 360, X_Z3));
-        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 390, X_Z4));
-        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 410, X_Z5));
-    }
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 300, x_z1));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 330, x_z2));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 360, x_z3));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 390, x_z4));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 420, x_z5));
 
+    }
+    
     if (pattern2_ == 4) {
 
         /*Y_Z1 = -34; Y_Z2 = -33; Y_Z3 = -32; Y_Z4 = -31; Y_Z5 = -30;*/
 
 
-        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 300, Y_Z1));
-        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 330, Y_Z2));
-        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 360, Y_Z3));
-        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 390, Y_Z4));
-        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 410, Y_Z5));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 300, y_z1));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 330, y_z2));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 360, y_z3));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 390, y_z4));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 420, y_z5));
+    
     }
 
     //HumanDown
@@ -1300,9 +1349,15 @@ void MainScene::Render()
     
 
     //メインbg
-    DX9::SpriteBatch->DrawSimple(main_bg_.Get(), SimpleMath::Vector3(0, 0, 10));
+    if (bg_Flag == 0) {
+        DX9::SpriteBatch->DrawSimple(main_bg_.Get(), SimpleMath::Vector3(0, 0, 10),
+            RectWH(bgX_, bgY_, 1280, 720));
+    }
 
-
+    if (bg_Flag == 1) {
+        DX9::SpriteBatch->DrawSimple(main_bg_2.Get(), SimpleMath::Vector3(0, 0, 10),
+            RectWH(bgX2_, bgY2_, 1280, 720));
+    }
 
     //QTE　テキスト指示
     if (button_Instruct_ == 1) {
@@ -1318,7 +1373,7 @@ void MainScene::Render()
         QTE_font_.Get(),
         SimpleMath::Vector2(0.0f, 650.0f),
         DX9::Colors::RGBA(255, 255, 0, 255),
-        L"%d", QTE_serect2_/*Human_Y_P_*/
+        L"%d", qte_push_button_
     );
 
     
