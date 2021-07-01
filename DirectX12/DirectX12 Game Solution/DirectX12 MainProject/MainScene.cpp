@@ -143,16 +143,16 @@ void MainScene::LoadAssets()
     gauge_red_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Red_.png");
     gauge_blue_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Blue_.png");
 
-    shark_hp_empty_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.under1.png");
-    shark_hp_hull_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.pinku.png");
+    shark_hp_empty_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.under.png");
+    shark_hp_hull_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.red.2.psd.png");
 
     shark_sprite_        = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Fish_Shark.png");
     shark_behind_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Fish_Shark_Behind.png");
 
     fishing_rod_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Ship.png");
 
-    angler_hp_empty_sprite_      = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.under1.png");
-    angler_hp_hull_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.green.png");
+    angler_hp_empty_sprite_      = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.under.png");
+    angler_hp_hull_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.red.2.psd.png");
 
     dead_zone_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Dead_Zone.png");
 
@@ -668,7 +668,7 @@ void MainScene::Render()
     DX9::SpriteBatch->DrawSimple(angler_hp_empty_sprite_.Get(), angler_hp_cover_position_);
 
     DX9::SpriteBatch->DrawSimple(
-        shark_hp_hull_sprite_.Get(),
+        angler_hp_hull_sprite_.Get(),
         SimpleMath::Vector3(angler_hp_position_.x, (int)angler_hp_position_.y, angler_hp_position_.z),
         Rect(0.0f, angler_hp_, ANGLER_HP_RIGHT_LIMIT_, (int)ANGLER_HP_DOWN_LIMIT_)
     );
@@ -699,7 +699,7 @@ void MainScene::Render()
         }
     }
 
-    DX9::SpriteBatch->DrawString(
+   /* DX9::SpriteBatch->DrawString(
         debug_font_.Get(),
         SimpleMath::Vector2(0.0f, 0.0f),
         DX9::Colors::RGBA(0, 0, 0, 255),
@@ -725,7 +725,7 @@ void MainScene::Render()
         SimpleMath::Vector2(0.0f, 150.0f),
         DX9::Colors::RGBA(0, 0, 0, 255),
         L"%d", (int)shark_hp_
-    );
+    );*/
 
     if (shark_hp_flg_ == 1 || game_over_flg_ == 1) {
         DX9::SpriteBatch->DrawString(

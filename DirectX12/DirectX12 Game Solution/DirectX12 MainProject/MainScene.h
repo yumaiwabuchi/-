@@ -107,7 +107,7 @@ private:
     const float SHARK_HP_POSITION_X_    =                   10.0f;
     const float SHARK_HP_POSITION_Y_    =         360.0f - 232.0f;
     const float SHARK_HP_POSITION_Z_    =                    -5.0f;
-    const float SHARK_HP_RIGHT_LIMIT_   =                   94.0f;
+    const float SHARK_HP_RIGHT_LIMIT_   =                  114.0f;
     const float SHARK_HP_DOWN_LIMIT_    =                  464.0f;
     const float SHARK_HP_START_         =                    0.0f;
     const float SHARK_HP_DAMAGE_        =                    4.4f;
@@ -150,10 +150,10 @@ private:
     // íﬁÇËêlÇÃà íu
 
     // íﬁÇËêl
-    const float ANGLER_HP_POSITION_X_    =                   1280.0f - 94.0f;
+    const float ANGLER_HP_POSITION_X_    =                  1280.0f - 114.0f;
     const float ANGLER_HP_POSITION_Y_    =                   360.0f - 232.0f;
     const float ANGLER_HP_POSITION_Z_    =                             -5.0f;
-    const float ANGLER_HP_RIGHT_LIMIT_ = 94.0f;
+    const float ANGLER_HP_RIGHT_LIMIT_ = 114.0f;
     const float ANGLER_HP_DOWN_LIMIT_ = 464.0f;
     const float ANGLER_HP_START_ = 0.0f;
     const float ANGLER_HP_HALF_ = 200.0f;
