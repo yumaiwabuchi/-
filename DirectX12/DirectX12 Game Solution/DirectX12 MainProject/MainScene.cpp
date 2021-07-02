@@ -64,7 +64,7 @@ void MainScene::Initialize()
     shark_hp_ = SHARK_HP_START_;
     angler_hp_ = ANGLER_HP_START_;
 
-    shark_hp_flg_ = 0;
+    shark_hp_flg_  = 0;
     angler_hp_flg_ = 0;
 
     atack_flg_      =    0;

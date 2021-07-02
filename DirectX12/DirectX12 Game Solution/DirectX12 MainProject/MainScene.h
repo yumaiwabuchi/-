@@ -76,15 +76,15 @@ private:
     // 定数
 
     // BG
-    const float BG_SIZE_X_ = 1280.0f;
-    const float BG_SIZE_Y_ =  720.0f;
-    const float BG_SKY_POSITION_Z_ = 1.0f;
-    const float BG_FRONT_SEA_POSITION_Z_ = -2.0f;
+    const float BG_SIZE_X_                     = 1280.0f;
+    const float BG_SIZE_Y_                     =  720.0f;
+    const float BG_SKY_POSITION_Z_             =    1.0f;
+    const float BG_FRONT_SEA_POSITION_Z_       =   -2.0f;
     const float BG_FRONT_SEA_START_POSITION_X_ = -480.0f;
-    const float BG_BEHIND_SEA_POSITION_Z_ = 0.1f;
-    const float BG_FRAME_POSITION_Z_ = -3.0f;
-    const float BG_SPEED_ = 100.0f;
-    const float BG_FRONT_SPEED_ = 150.0f;
+    const float BG_BEHIND_SEA_POSITION_Z_      =    0.1f;
+    const float BG_FRAME_POSITION_Z_           =   -3.0f;
+    const float BG_SPEED_                      =  100.0f;
+    const float BG_FRONT_SPEED_                =  150.0f;
     
     // サメの動き
     const float SHARK_SIZE_X_                 =                      400.0f;
@@ -108,16 +108,16 @@ private:
     const float INPUT_TIME_LIMIT_             =                        0.5f;
     
     // サメのHP
-    const float SHARK_HP_POSITION_X_    =                   10.0f;
-    const float SHARK_HP_POSITION_Y_    =         360.0f - 232.0f;
+    const float SHARK_HP_POSITION_X_    =                    10.0f;
+    const float SHARK_HP_POSITION_Y_    =          360.0f - 232.0f;
     const float SHARK_HP_POSITION_Z_    =                    -5.0f;
-    const float SHARK_HP_RIGHT_LIMIT_   =                  114.0f;
-    const float SHARK_HP_DOWN_LIMIT_    =                  464.0f;
-    const float SHARK_HP_START_         =                    0.0f;
-    const float SHARK_HP_DAMAGE_        =                    4.4f;
-    const float SHARK_HP_DAMAGE_SLOWLY_ = SHARK_HP_DAMAGE_ * 2.0f;
-    const float SHARK_HP_DAMAGE_ATACK   =                    5.0f;
-    const float SHARK_HP_HEAL_          =                   50.0f;
+    const float SHARK_HP_RIGHT_LIMIT_   =                   114.0f;
+    const float SHARK_HP_DOWN_LIMIT_    =                   464.0f;
+    const float SHARK_HP_START_         =                     0.0f;
+    const float SHARK_HP_DAMAGE_        =                     4.4f;
+    const float SHARK_HP_DAMAGE_SLOWLY_ =  SHARK_HP_DAMAGE_ * 2.0f;
+    const float SHARK_HP_DAMAGE_ATACK   =                     5.0f;
+    const float SHARK_HP_HEAL_          =                    50.0f;
 
     // サメの攻撃
     const float SHARK_ATACK_GROW_SPEED_     = 1200.0f;
@@ -126,22 +126,22 @@ private:
     const float SHARK_ATACK_TIME_           =   1.00f;
 
     // 釣り竿の動き
-    const float FISHING_ROD_SIZE_X_                 =                     200.0f;
-    const float FISHING_ROD_SIZE_Y_                 =                     200.0f;
-    const float FISHING_ROD_SIZE_HALF_X_            = FISHING_ROD_SIZE_X_ / 2.0f;
-    const float FISHING_ROD_SIZE_HALF_Y_            = FISHING_ROD_SIZE_Y_ / 2.0f;
-    const float FISHING_ROD_START_POSITION_X_       =                       0.0f;
-    const float FISHING_ROD_START_POSITION_Y_       =                       -50.0f;
-    const float FISHING_ROD_START_POSITION_Z_       =                       0.0f;
-    const float FISHING_ROD_RIGHT_LIMIT_POSITION_X_ =            1280.0f - FISHING_ROD_SIZE_X_;
-    const float FISHING_ROD_LEFT_LIMIT_POSITION_X_  =                       0.0f;
+    const float FISHING_ROD_SIZE_X_                 =                        200.0f;
+    const float FISHING_ROD_SIZE_Y_                 =                        200.0f;
+    const float FISHING_ROD_SIZE_HALF_X_            =    FISHING_ROD_SIZE_X_ / 2.0f;
+    const float FISHING_ROD_SIZE_HALF_Y_            =    FISHING_ROD_SIZE_Y_ / 2.0f;
+    const float FISHING_ROD_START_POSITION_X_       =                          0.0f;
+    const float FISHING_ROD_START_POSITION_Y_       =                        -50.0f;
+    const float FISHING_ROD_START_POSITION_Z_       =                          0.0f;
+    const float FISHING_ROD_RIGHT_LIMIT_POSITION_X_ = 1280.0f - FISHING_ROD_SIZE_X_;
+    const float FISHING_ROD_LEFT_LIMIT_POSITION_X_  =                          0.0f;
     const float FISHING_ROD_UP_LIMIT_POSITION_Y_    =                       -100.0f;
-    const float FISHING_ROD_DOWN_LIMIT_POSITION_Y_  =             720.0f - FISHING_ROD_SIZE_Y_;
-    const float FISHING_ROD_START_SPEED_            =                     100.0f;
+    const float FISHING_ROD_DOWN_LIMIT_POSITION_Y_  =  720.0f - FISHING_ROD_SIZE_Y_;
+    const float FISHING_ROD_START_SPEED_            =                        100.0f;
 
     // 釣り糸
-    const float FISHING_LINE_2_DIFFERENCE_ =   0.5f;
-    const float FISHING_LINE_3_DIFFERENCE_ =  -0.5f;
+    const float FISHING_LINE_2_DIFFERENCE_ =               0.5f;
+    const float FISHING_LINE_3_DIFFERENCE_ =              -0.5f;
     const float SHARK_LINE_DIFFERENCE_X_   = SHARK_SIZE_HALF_X_;
     const float SHARK_LINE_DIFFERENCE_Y_   = SHARK_SIZE_HALF_Y_;
 
@@ -154,15 +154,15 @@ private:
     // 釣り人の位置
 
     // 釣り人
-    const float ANGLER_HP_POSITION_X_    =                  1280.0f - 114.0f;
-    const float ANGLER_HP_POSITION_Y_    =                   360.0f - 232.0f;
-    const float ANGLER_HP_POSITION_Z_    =                             -5.0f;
-    const float ANGLER_HP_RIGHT_LIMIT_ = 114.0f;
-    const float ANGLER_HP_DOWN_LIMIT_ = 464.0f;
-    const float ANGLER_HP_START_ = 0.0f;
-    const float ANGLER_HP_HALF_ = 200.0f;
-    const float ANGLER_POSITION_SPEED_Y_    =                              5.0f;
-    const float ANGLER_POSITION_SPEED_UP_Y_ =                             15.0f;
+    const float ANGLER_HP_POSITION_X_       = 1280.0f - 114.0f;
+    const float ANGLER_HP_POSITION_Y_       =  360.0f - 232.0f;
+    const float ANGLER_HP_POSITION_Z_       =            -5.0f;
+    const float ANGLER_HP_RIGHT_LIMIT_      =           114.0f;
+    const float ANGLER_HP_DOWN_LIMIT_       =           464.0f;
+    const float ANGLER_HP_START_            =             0.0f;
+    const float ANGLER_HP_HALF_             =           200.0f;
+    const float ANGLER_POSITION_SPEED_Y_    =             5.0f;
+    const float ANGLER_POSITION_SPEED_UP_Y_ =            15.0f;
 
     // つばぜり合い
     const float GAUGE_START_POSITION_X_     =   340.0f;
