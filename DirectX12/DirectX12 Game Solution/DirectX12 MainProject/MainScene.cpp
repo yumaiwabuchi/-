@@ -5,6 +5,9 @@
 #include "Base/pch.h"
 #include "Base/dxtk.h"
 #include "SceneFactory.h"
+#include <random>
+#include "DontDestroyOnLoad.h"
+
 
 // Initialize member variables.
 MainScene::MainScene() : dx9GpuDescriptor{}
@@ -15,6 +18,10 @@ MainScene::MainScene() : dx9GpuDescriptor{}
 // Initialize a variable and audio resources.
 void MainScene::Initialize()
 {
+    //全プログラム制御フラグ
+    shark_STOP_FLAG_ = Shark_STOP_FLAG_; //(int)
+
+
     bg_sky_position_.x = 0.0f;
     bg_sky_position_.y = 0.0f;
     bg_sky_position_.z = BG_SKY_POSITION_Z_;
@@ -105,6 +112,65 @@ void MainScene::Initialize()
     game_clear_flg_ = 0;
 
     game_time_ = 0.0f;
+
+    //QTE 指示
+    button_Instruct_ = Button_Instruct_;
+    //QTE
+    qte_ = QTE_;
+    qte_time_ = QTE_Time_;
+    qte_no_ = QTE_No_;
+
+    qte_z_1 = QTE_Z_1;
+    qte_z_2 = QTE_Z_2;
+    qte_z_3 = QTE_Z_3;
+    qte_z_4 = QTE_Z_4;
+
+    a_z = A_Z;
+    b_z = B_Z;
+    x_z = X_Z;
+    y_z = Y_Z;
+    //QTE
+    pattern_ = Pattern_;
+    //QTE
+    random_QTE_pattern_ = std::uniform_int_distribution<int>(1, 4);
+    qte_pattern_ = QTE_pattern_;
+
+    //secondサメ攻撃
+    fishing_rod_size_x_ = FISHING_ROD_SIZE_X_;
+    fishing_rod_size_y_ = FISHING_ROD_SIZE_Y_;
+
+    //落っこち人間
+    //初期化
+    Flag_GG_ = 0.0f;
+    Human_Flag_ = 0.0f;
+    Human_Y_Time_ = 0.0f;
+
+    Human_Y_P_ = -50;
+    Human_Z_P_ = -3;
+    Attack_count_ = three_count_;
+
+    Human_Y_P_ = -100;
+    random_Human_pattern_ = std::uniform_int_distribution<int>(200, 1000);
+
+    Human_size_x_ = HUMAN_SIZE_X_;
+    Human_size_y_ = HUMAN_SIZE_Y_;
+
+    Human_dead_ = 0;
+    Human_HP_ = 0.0f;
+    Human_GH_ = 0;
+
+    //QTE2初期化
+    pattern2_ = 0;
+    qte_serect2_ = QTE_serect2_;
+    qte_push_button_ = QTE_push_button_;
+    qte_time_flg_ = QTE_Time_Flg_;
+    push_button_ = Push_button_;
+    qte_p_ = QTE_P_;
+
+    a_z1 = A_Z1; a_z2 = A_Z2; a_z3 = A_Z3; a_z4 = A_Z4; a_z5 = A_Z5;
+    b_z1 = B_Z1; b_z2 = B_Z2; b_z3 = B_Z3; b_z4 = B_Z4; b_z5 = B_Z5;
+    x_z1 = X_Z1; x_z2 = X_Z2; x_z3 = X_Z3; x_z4 = X_Z4; x_z5 = X_Z5;
+    y_z1 = Y_Z1; y_z2 = Y_Z2; y_z3 = Y_Z3; y_z4 = Y_Z4; y_z5 = Y_Z5;
 }
 
 // Allocate all memory the Direct3D and Direct2D resources.
@@ -146,17 +212,28 @@ void MainScene::LoadAssets()
     shark_hp_empty_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.under.png");
     shark_hp_hull_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.red.2.psd.png");
 
-    shark_sprite_        = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Fish_Shark.png");
-    shark_behind_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Fish_Shark_Behind.png");
+    shark_sprite_        = DX9::Sprite::CreateFromFile(DXTK->Device9, L"light1.png");
+    shark_behind_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"left1.png");
 
-    fishing_rod_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Ship.png");
+    fishing_rod_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"boat.png");
 
     angler_hp_empty_sprite_      = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.under.png");
     angler_hp_hull_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.red.2.psd.png");
 
     dead_zone_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Dead_Zone.png");
 
-    danger_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Danger.png");
+    danger_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"WARNING.png");
+
+    //QTEボタン画像
+    A_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.A.png");
+    B_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.B.png");
+    X_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.X.png");
+    Y_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.Y.png");
+    //QTEデバッグ用font
+    QTE_font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ゴシック", 30);
+
+    //落ちる人
+    Down_Human_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Oboreru_Hito.png");
 }
 
 // Releasing resources required for termination.
@@ -191,10 +268,15 @@ NextScene MainScene::Update(const float deltaTime)
 
     BGUpdate         (deltaTime);
     GameTimeUpdate   (deltaTime);
-    SharkUpdate      (deltaTime);
-    FishingRodUpdate (deltaTime);
-    DeadZoneUpdate   (deltaTime);
-    AnglerUpdate     (deltaTime);
+    if (shark_STOP_FLAG_ == 0) {
+        SharkUpdate(deltaTime);
+        FishingRodUpdate(deltaTime);
+        DeadZoneUpdate(deltaTime);
+        AnglerUpdate(deltaTime);
+    }
+
+    SharkAtack2Update(deltaTime);
+    QTEUpdate2(deltaTime);
 
     if (DXTK->KeyEvent->pressed.T) {
         if (gauge_display_flg == 0) {
@@ -219,6 +301,18 @@ NextScene MainScene::Update(const float deltaTime)
         DXTK->GamePadVibration(0.0f, 0.0f, 0.0f);
         return NextScene::LossScene;
 
+    }
+
+    //サメZ_position_
+    shark_position_.z = -20;
+
+
+    //QTE
+    qte_p_ = shark_position_.y;
+
+
+    if (qte_p_ >= 180) {
+        qte_ += 1 * deltaTime;
     }
 
     return NextScene::Continue;
@@ -473,6 +567,13 @@ void MainScene::SharkAtackUpdate(const float deltaTime)
 
 void MainScene::SharkHPUpdate(const float deltaTime)
 {
+   /* if (shark_hp_position_y_ <= SHARK_HP_POSITION_Y_) {
+        shark_hp_position_y_ = SHARK_HP_POSITION_Y_;
+    }
+
+    if (shark_hp_position_y_ >= SHARK_HP_POSITION_Y_) {
+        shark_hp_position_y_ = SHARK_HP_POSITION_Y_;
+    }*/
 
     if (shark_hp_ <= 0.0f) {
         shark_hp_ = 0.0f;
@@ -607,6 +708,462 @@ void MainScene::DeadZoneUpdate(const float deltaTime)
         }
     }
 }
+
+void MainScene::SharkAtack2Update(const float deltaTime)
+{
+    if (Attack_count_ == 1) {
+        if (Flag_GG_ <= 0.2f) {
+            if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+                RectWH(fishing_rod_position_.x, fishing_rod_position_.y, fishing_rod_size_x_, fishing_rod_size_y_))) {
+                // あたったとき
+                fishing_time += deltaTime;
+                Attack_2P_ = 1;
+                Time_Flag_ = 1;
+                Human_X_P_ = random_Human_pattern_(random_Engine_);
+                Flag_GG_ = 1.0f;
+
+            }
+
+        }
+    }
+
+    if (Attack_count_ == 2) {
+        if (Flag_GG_ <= 0.2f) {
+            if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+                RectWH(fishing_rod_position_.x, fishing_rod_position_.y, fishing_rod_size_x_, fishing_rod_size_y_))) {
+                // あたったとき
+                fishing_time += deltaTime;
+                Attack_2P_ = 2;
+                Time_Flag_ = 1;
+                Human_X_P_ = random_Human_pattern_(random_Engine_);
+                Flag_GG_ = 1.0f;
+
+            }
+
+        }
+
+    }
+
+    if (Attack_count_ == 3) {
+        if (Flag_GG_ <= 0.2f) {
+            if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+                RectWH(fishing_rod_position_.x, fishing_rod_position_.y, fishing_rod_size_x_, fishing_rod_size_y_))) {
+                // あたったとき
+                fishing_time += deltaTime;
+                Attack_2P_ = 3;
+                Time_Flag_ = 1;
+                Human_X_P_ = random_Human_pattern_(random_Engine_);
+                Flag_GG_ = 1.0f;
+
+            }
+
+        }
+    }
+
+    if (Time_Flag_ == 1) {
+        Human_Y_Time_ += deltaTime;
+    }
+
+    if (Human_Y_Time_ >= 0.2f) {
+        Human_Flag_ = 1.0f;
+
+        Human_Y_Time_ = 0.0f;
+
+    }
+
+    if (Human_Flag_ == 1.0f) {
+        Human_Y_P_ += 18;
+        Human_Flag_ -= deltaTime;
+    }
+
+    if (Human_Y_P_ >= -30) {
+        Human_Z_P_ = -10;
+        Attack_2P_ = 0;
+    }
+
+    if (Human_Y_P_ >= 730) {
+        Human_Z_P_ = 50;
+        Time_Flag_ = 0;
+        Human_Y_Time_ = 0.0f;
+        Attack_count_ += 1;
+        Human_Y_P_ = -100;
+        Flag_GG_ = 0.0f;
+    }
+
+    //人が食われると回復するコード
+
+    if (Human_GH_ == 0) {
+        if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+            RectWH(Human_X_P_, Human_Y_P_, Human_size_x_, Human_size_y_))) {
+            // あたったとき
+            Human_Z_P_ = 50;
+            Human_Y_P_ = 800;
+            Human_dead_ = 1;
+
+        }
+
+    }
+
+    if (Human_dead_ == 1) {
+        Human_HP_ += deltaTime;
+        shark_hp_ -= 15.0f;
+        shark_hp_position_y_ -= 15.0f;
+        Human_GH_ = 1;
+    }
+
+    if (Human_HP_ >= 0.1f) {
+        Human_GH_ = 0;
+        Human_dead_ = 0;
+    }
+
+}
+
+void MainScene::QTEUpdate2(const float deltaTime)
+{
+    if (qte_ >= 10.0f) {
+        //QTEセレクト
+        qte_serect2_ = 1;
+        qte_ = 0.0f;
+    }
+
+    if (qte_serect2_ == 1) {
+        shark_STOP_FLAG_ = 1;
+
+
+
+        if (shark_position_.x <= 620 && shark_position_.y <= 350) {
+            pattern2_ = 1;
+            a_z1 = -34; a_z2 = -33; a_z3 = -32; a_z4 = -31; a_z5 = -30;
+
+            button_Instruct_ = 1;
+        }
+
+        if (shark_position_.x >= 621 && shark_position_.y <= 351) {
+            pattern2_ = 2;
+            b_z1 = -34; b_z2 = -33; b_z3 = -32; b_z4 = -31; b_z5 = -30;
+
+            button_Instruct_ = 1;
+        }
+
+        if (shark_position_.x <= 620 && shark_position_.y >= 350) {
+            pattern2_ = 3;
+            x_z1 = -34; x_z2 = -33; x_z3 = -32; x_z4 = -31; x_z5 = -30;
+
+            button_Instruct_ = 1;
+        }
+
+        if (shark_position_.x >= 621 && shark_position_.y >= 351) {
+            pattern2_ = 4;
+            y_z1 = -34; y_z2 = -33; y_z3 = -32; y_z4 = -31; y_z5 = -30;
+
+            button_Instruct_ = 1;
+        }
+
+
+    }
+
+
+    //QTE(4)パターン
+
+    if (pattern2_ == 1) {
+        qte_serect2_ = 0;
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
+
+        if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+            qte_serect2_ = 0;
+            a_z1 = 50;
+            /*qte_push_button_ = 1;*/
+        }
+
+        if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
+            qte_push_button_ += 1;
+        }
+
+        /*if(DXTK->KeyEvent->pressed.Up) {
+            qte_serect2_ = 0;
+            a_z1 = 50;
+            qte_push_button_ = push_button_1;
+        }*/
+
+
+        if (qte_push_button_ == 1) {
+
+            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED /*, DXTK->KeyEvent->pressed.Up*/) {
+                a_z2 = 50;
+                /*qte_push_button_ = 2;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 2) {
+
+            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
+                a_z3 = 50;
+                /*qte_push_button_ = 3;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 3) {
+
+            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
+                a_z4 = 50;
+                /*qte_push_button_ = 4;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 4) {
+
+            if (DXTK->GamePadEvent[0].a == GamePad::ButtonStateTracker::PRESSED) {
+                a_z5 = 50;
+                shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+                /*qte_push_button_ = 5;*/
+                qte_pattern_ = 0.0f;
+                qte_time_ = 0.0f;
+                pattern2_ = 0;
+            }
+
+        }
+
+    }
+
+    if (pattern2_ == 2) {
+        qte_serect2_ = 0;
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
+
+
+        if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+            qte_serect2_ = 0;
+            b_z1 = 50;
+            /*qte_push_button_ = 1;*/
+        }
+
+        /*if (DXTK->KeyEvent->pressed.Right) {
+            qte_serect2_ = 0;
+            b_z1 = 50;
+            qte_push_button_ = push_button_1;
+        }*/
+
+        if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
+            qte_push_button_ += 1;
+        }
+
+
+        if (qte_push_button_ == 1) {
+
+            if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
+                b_z2 = 50;
+                /*qte_push_button_ = 2;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 2) {
+
+            if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
+                b_z3 = 50;
+                /*qte_push_button_ = 3;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 3) {
+
+            if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
+                b_z4 = 50;
+                /*qte_push_button_ = 4;*/
+            }
+
+        }
+
+        if (qte_push_button_ == push_button_4) {
+
+            if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
+                b_z5 = 50;
+                shark_STOP_FLAG_ = 0; pattern2_ = 0;
+                button_Instruct_ = 0;
+                /*qte_push_button_ = 5;*/
+                qte_pattern_ = 0.0f;
+                qte_time_ = 0.0f;
+            }
+
+        }
+
+    }
+
+    if (pattern2_ == 3) {
+        qte_serect2_ = 0;
+
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
+
+
+
+        if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+            qte_serect2_ = 0;
+            x_z1 = 50;
+            /*qte_push_button_ = 1;*/
+        }
+
+        if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
+            qte_push_button_ += 1;
+        }
+
+
+
+        if (qte_push_button_ == 1) {
+
+            if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
+                x_z2 = 50;
+                /*qte_push_button_ = 2;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 2) {
+
+            if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
+                x_z3 = 50;
+                /*qte_push_button_ = 3;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 3) {
+
+            if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
+                x_z4 = 50;
+                /* qte_push_button_ = 4;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 4) {
+
+            if (DXTK->GamePadEvent[0].x == GamePad::ButtonStateTracker::PRESSED) {
+                x_z5 = 50;
+                shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+                pattern2_ = 0;
+                /*qte_push_button_ = 5;*/
+                qte_pattern_ = 0.0f;
+                qte_time_ = 0.0f;
+            }
+
+        }
+
+    }
+
+    if (pattern2_ == 4) {
+        qte_serect2_ = 0;
+        shark_STOP_FLAG_ = 1;
+        qte_time_ += deltaTime;
+
+
+        if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED && qte_push_button_ == 0) {
+            qte_serect2_ = 0;
+            y_z1 = 50;
+            /*qte_push_button_ = 1;*/
+        }
+
+        if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
+            qte_push_button_ += 1;
+        }
+
+
+        if (qte_push_button_ == 1) {
+
+            if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
+                y_z2 = 50;
+                /*qte_push_button_ = 2;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 2) {
+
+            if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
+                y_z3 = 50;
+                /*qte_push_button_ = 3;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 3) {
+
+            if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
+                y_z4 = 50;
+                /* qte_push_button_ = 4;*/
+            }
+
+        }
+
+        if (qte_push_button_ == 4) {
+
+            if (DXTK->GamePadEvent[0].y == GamePad::ButtonStateTracker::PRESSED) {
+                y_z5 = 50;
+                shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+                pattern2_ = 0;
+                /*qte_push_button_ = 5;*/
+                qte_pattern_ = 0.0f;
+                qte_time_ = 0.0f;
+            }
+
+        }
+
+    }
+
+    if (qte_push_button_ == 5) {
+        shark_STOP_FLAG_ = 0; button_Instruct_ = 0;
+        pattern2_ = 0;
+
+        qte_pattern_ = 0.0f;
+        qte_time_ = 0.0f;
+    }
+
+    if (pattern2_ == 0) {
+
+        qte_push_button_ = 0;
+    }
+
+    if (qte_time_ >= 1.8f) {
+        shark_STOP_FLAG_ = 0;
+        qte_push_button_ = 0;
+        shark_position_.y -= 10;
+        push_button_ += deltaTime;
+        DXTK->GamePadVibration(0, 0.6f, 0.6f);
+
+    }
+
+
+    if (push_button_ >= 0.8f) {
+        DXTK->GamePadVibration(0, 0.0f, 0.0f);
+        qte_pattern_ = 0;
+    }
+
+    if (qte_time_ >= 2.2f) {
+        button_Instruct_ = 0;
+        push_button_ = 0.0f;
+        pattern2_ = 0;
+        qte_push_button_ = 0;
+
+        qte_time_flg_ = 1;
+        qte_time_ = 0.0f;
+    }
+
+    if (pattern2_ == 0) {
+
+        a_z1 = 50; a_z2 = 50; a_z3 = 50; a_z4 = 50; a_z5 = 50;
+        b_z1 = 50; b_z2 = 50; b_z3 = 50; b_z4 = 50; b_z5 = 50;
+        x_z1 = 50; x_z2 = 50; x_z3 = 50; x_z4 = 50; x_z5 = 50;
+        y_z1 = 50; y_z2 = 50; y_z3 = 50; y_z4 = 50; y_z5 = 50;
+
+    }
+
+}
+
 
 // Draws the scene.
 void MainScene::Render()
@@ -753,6 +1310,83 @@ void MainScene::Render()
             L"B"
         );
     }
+
+    //QTE２
+
+    if (pattern2_ == 1) {
+        /*A_Z1 = -14; A_Z2 = -13; A_Z3 = -12; A_Z4 = -11; A_Z5 = -10;*/
+
+
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(500, 320, a_z1));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(530, 320, a_z2));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(560, 320, a_z3));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(590, 320, a_z4));
+        DX9::SpriteBatch->DrawSimple(A_.Get(), SimpleMath::Vector3(620, 320, a_z5));
+
+    }
+
+    if (pattern2_ == 2) {
+
+        /*B_Z1 = -14; B_Z2 = -13; B_Z3 = -12; B_Z4 = -11; B_Z5 = -10;*/
+
+
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(500, 320, b_z1));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(530, 320, b_z2));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(560, 320, b_z3));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(590, 320, b_z4));
+        DX9::SpriteBatch->DrawSimple(B_.Get(), SimpleMath::Vector3(620, 320, b_z5));
+
+    }
+
+
+    if (pattern2_ == 3) {
+
+        /*X_Z1 = -14; X_Z2 = -13; X_Z3 = -12; X_Z4 = -11; X_Z5 = -10;*/
+
+
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 300, x_z1));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 330, x_z2));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 360, x_z3));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 390, x_z4));
+        DX9::SpriteBatch->DrawSimple(X_.Get(), SimpleMath::Vector3(580, 420, x_z5));
+
+    }
+
+    if (pattern2_ == 4) {
+
+        /*Y_Z1 = -34; Y_Z2 = -33; Y_Z3 = -32; Y_Z4 = -31; Y_Z5 = -30;*/
+
+
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 300, y_z1));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 330, y_z2));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 360, y_z3));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 390, y_z4));
+        DX9::SpriteBatch->DrawSimple(Y_.Get(), SimpleMath::Vector3(580, 420, y_z5));
+
+    }
+
+    //HumanDown
+
+
+    DX9::SpriteBatch->DrawSimple(Down_Human_.Get(), SimpleMath::Vector3(Human_X_P_, Human_Y_P_, Human_Z_P_));
+
+    //QTE　テキスト指示
+    if (button_Instruct_ == 1) {
+        DX9::SpriteBatch->DrawString(
+            QTE_font_.Get(),
+            SimpleMath::Vector2(400.0f, 250.0f),
+            DX9::Colors::RGBA(255, 255, 0, 255),
+            L"ボタンを押せ!!"
+        );
+    }
+
+    DX9::SpriteBatch->DrawString(
+        QTE_font_.Get(),
+        SimpleMath::Vector2(0.0f, 650.0f),
+        DX9::Colors::RGBA(255, 255, 0, 255),
+        L"%d", qte_push_button_
+    );
+
     
     DX9::SpriteBatch->End();
     DXTK->Direct3D9->EndScene();

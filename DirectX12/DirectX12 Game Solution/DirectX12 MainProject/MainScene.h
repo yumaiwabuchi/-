@@ -4,7 +4,11 @@
 
 #pragma once
 
+#include "Base/pch.h"
+#include "Base/dxtk.h"
 #include "Scene.h"
+#include <random>
+#include "DontDestroyOnLoad.h"
 
 using Microsoft::WRL::ComPtr;
 using std::unique_ptr;
@@ -83,7 +87,7 @@ private:
     const float BG_FRONT_SPEED_ = 150.0f;
     
     // サメの動き
-    const float SHARK_SIZE_X_                 =                      300.0f;
+    const float SHARK_SIZE_X_                 =                      400.0f;
     const float SHARK_SIZE_Y_                 =                      200.0f;
     const float SHARK_SIZE_HALF_X_            =        SHARK_SIZE_X_ / 2.0f;
     const float SHARK_SIZE_HALF_Y_            =        SHARK_SIZE_Y_ / 2.0f;
@@ -127,7 +131,7 @@ private:
     const float FISHING_ROD_SIZE_HALF_X_            = FISHING_ROD_SIZE_X_ / 2.0f;
     const float FISHING_ROD_SIZE_HALF_Y_            = FISHING_ROD_SIZE_Y_ / 2.0f;
     const float FISHING_ROD_START_POSITION_X_       =                       0.0f;
-    const float FISHING_ROD_START_POSITION_Y_       =                       -100.0f;
+    const float FISHING_ROD_START_POSITION_Y_       =                       -50.0f;
     const float FISHING_ROD_START_POSITION_Z_       =                       0.0f;
     const float FISHING_ROD_RIGHT_LIMIT_POSITION_X_ =            1280.0f - FISHING_ROD_SIZE_X_;
     const float FISHING_ROD_LEFT_LIMIT_POSITION_X_  =                       0.0f;
@@ -280,8 +284,129 @@ private:
     // プレイタイム
     float game_time_;
 
+    //ゲーム制御フラグ
+    int shark_STOP_FLAG_;
+    const int Shark_STOP_FLAG_ = 0;
+
     // 当たり判定
     bool  isIntersect(Rect& rect1, Rect& rect2);
+
+    //QTEプログラム
+    // 定数
+    const int QTE_Z_1 = 5;
+    const int QTE_Z_2 = 5;
+    const int QTE_Z_3 = 5;
+    const int QTE_Z_4 = 5;
+    const float QTE_ = 0.0f;
+    const float QTE_P_ = 0.0f;
+    const float QTE_Time_ = 0.0f;
+    const int QTE_No_ = 0;
+    const int QTE_pattern_ = 0;
+
+    //変数
+    int qte_z_1; int qte_z_2; int qte_z_3; int qte_z_4;
+    float qte_; float qte_p_; float qte_time_; int qte_no_; int qte_pattern_;
+
+    int pattern2_; int qte_serect2_; int qte_push_button_;
+    int qte_time_flg_; float push_button_; int pattern_;
+    int button_Instruct_;
+
+
+    //ボタンガイド&&画像
+    const int Pattern_ = 0;
+    const int Button_Instruct_ = 0;
+    DX9::SPRITEFONT QTE_font_;
+
+    DX9::SPRITE A_;
+    DX9::SPRITE B_;
+    DX9::SPRITE X_;
+    DX9::SPRITE Y_;
+
+    //ボタン画像　Z軸
+    const int A_Z = 5; const int B_Z = 5; const int X_Z = 5; const int Y_Z = 5;
+    int a_z; int b_z; int x_z; int y_z;
+    //QTEランダムgenerator
+    std::mt19937 randomEngine_;
+    std::uniform_int_distribution<int> random_QTE_pattern_;
+
+
+    //Second_Shark_attack_プログラム
+    //変数
+    int Attack_2P_;
+    int Physical_strength_is_reduced_;
+    int Down_Human_End_;
+
+    float Flag_GG_;
+
+   /* const float FISHING_ROD_SIZE_X_ = 22.0f;
+    const float FISHING_ROD_SIZE_Y_ = 50.0f;*/
+
+    float fishing_time = 0;
+    float fishing_rod_size_x_;
+    float fishing_rod_size_y_;
+
+    //attack_count
+    int Attack_count_;
+    const int three_count_ = 1;
+
+    //サメ体力
+    int Shark_Physical_strength_;
+
+    //落下人変数
+    int Human_No_;
+    float Human_Y_Time_;
+    int Time_Flag_;
+    float Human_Flag_;
+
+    int Human_X_P_; int Human_Y_P_; int Human_Z_P_;
+
+    /*int Down_Human_No_;*/
+    //サメattack２button
+    DX9::SPRITE B_Attack2_;
+    //落下する人
+    DX9::SPRITE Down_Human_;
+
+    const float HUMAN_SIZE_X_ = 80.0f; const float HUMAN_SIZE_Y_ = 70.0f;
+
+    float Human_size_x_;
+    float Human_size_y_;
+
+    int Human_dead_;
+    float Human_HP_;
+    float Human_GH_;
+
+    //落下する人　位置ランダム X
+    std::mt19937 random_Engine_;
+    std::uniform_int_distribution<int> random_Human_pattern_;
+
+
+    //追加QTE変数
+    const int QTE_serect2_ = 0;
+    const int QTE_push_button_ = 0;
+    const int Pattern2_ = 0;
+    const float Push_button_ = 0.0f;
+
+    const int QTE_Flg_ = 0;
+    const int QTE_Time_Flg_ = 0;
+    //４パターン×5
+    const int A_Z1 = 50; const int A_Z2 = 50; const int A_Z3 = 50; const int A_Z4 = 50; const int A_Z5 = 50;
+    const int B_Z1 = 50; const int B_Z2 = 50; const int B_Z3 = 50; const int B_Z4 = 50; const int B_Z5 = 50;
+    const int X_Z1 = 50; const int X_Z2 = 50; const int X_Z3 = 50; const int X_Z4 = 50; const int X_Z5 = 50;
+    const int Y_Z1 = 50; const int Y_Z2 = 50; const int Y_Z3 = 50; const int Y_Z4 = 50; const int Y_Z5 = 50;
+
+    int a_z1; int a_z2; int a_z3; int a_z4; int a_z5;
+    int b_z1; int b_z2; int b_z3; int b_z4; int b_z5;
+    int x_z1; int x_z2; int x_z3; int x_z4; int x_z5;
+    int y_z1; int y_z2; int y_z3; int y_z4; int y_z5;
+
+
+    const int push_button_1 = 1;
+    const int push_button_2 = 2;
+    const int push_button_3 = 3;
+    const int push_button_4 = 4;
+    const int push_button_5 = 5;
+
+
 
 // 関数
 private:
@@ -295,4 +420,7 @@ private:
     void DeadZoneUpdate   (const float deltaTime);
     void AnglerUpdate     (const float deltaTime);
     void GameTimeUpdate   (const float deltaTime);
+
+    void SharkAtack2Update(const float deltaTime);
+    void QTEUpdate2(const float deltaTime);
 };

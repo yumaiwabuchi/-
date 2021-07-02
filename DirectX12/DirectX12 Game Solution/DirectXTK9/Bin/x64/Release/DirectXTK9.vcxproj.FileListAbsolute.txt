@@ -1,0 +1,6 @@
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectXTK9\Bin\x64\Release\DirectXTK9.vcxproj.CopyComplete
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectXTK9\Bin\x64\Release\DirectXTK9.lib
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectXTK9\Bin\x64\Release\D3DCompiler_43.dll
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectXTK9\Bin\x64\Release\d3dx9_43.dll
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectXTK9\Bin\x64\Release\d3dx10_43.dll
+C:\Users\yumai\OneDrive\デスクトップ\第二回コンテンツ制作\DirectX12\DirectX12 Game Solution\DirectXTK9\Bin\x64\Release\d3dx11_43.dll

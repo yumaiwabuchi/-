@@ -43,7 +43,7 @@ void OperationScene::LoadAssets()
 
     // グラフィックリソースの初期化処理
 
-    bg_sky_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Operation_BG.png");
+    bg_sky_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"aaaaa.png");
 }
 
 // Releasing resources required for termination.
