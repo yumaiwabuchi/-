@@ -77,7 +77,7 @@ NextScene OperationScene::Update(const float deltaTime)
     // TODO: Add your game logic here.
 
     if (DXTK->KeyEvent->pressed.Enter || DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
-        return NextScene::MainScene;
+        return NextScene::TutorialScene;
     }
 
     return NextScene::Continue;
