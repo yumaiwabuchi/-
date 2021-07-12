@@ -191,6 +191,7 @@
     <ClInclude Include="LossScene.h" />
     <ClInclude Include="OperationScene.h" />
     <ClInclude Include="RuleOperationScene.h" />
+    <ClInclude Include="TutorialScene.h" />
     <ClInclude Include="WinScene.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Scene.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="LossScene.cpp" />
     <ClCompile Include="OperationScene.cpp" />
     <ClCompile Include="RuleOperationScene.cpp" />
+    <ClCompile Include="TutorialScene.cpp" />
     <ClCompile Include="WinScene.cpp" />
     <ClCompile Include="MainScene.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

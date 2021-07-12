@@ -57,6 +57,9 @@
     <ClInclude Include="OperationScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="TutorialScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Main.cpp">
@@ -84,6 +87,9 @@
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="OperationScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TutorialScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>

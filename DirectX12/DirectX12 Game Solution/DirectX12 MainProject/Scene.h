@@ -9,10 +9,11 @@ enum class NextScene : int {
 	TitleScene,
 	OperationScene,
 	RuleOperationScene,
+	TutorialScene,
 	MainScene,
 	WinScene,
 	LossScene,
-	StartScene = TitleScene
+	StartScene = TutorialScene
 };
 
 class Scene {
