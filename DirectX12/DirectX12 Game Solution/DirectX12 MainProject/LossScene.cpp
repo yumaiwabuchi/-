@@ -43,7 +43,7 @@ void LossScene::LoadAssets()
 
     // グラフィックリソースの初期化処理
 
-    bg_sky_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Loss_BG.png");
+    bg_sky_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"lose.png");
 }
 
 // Releasing resources required for termination.

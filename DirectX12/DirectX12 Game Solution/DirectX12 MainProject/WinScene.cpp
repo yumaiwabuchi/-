@@ -43,7 +43,7 @@ void WinScene::LoadAssets()
 
     // グラフィックリソースの初期化処理
 
-    bg_sky_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Win_BG.png");
+    bg_sky_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"win.png");
 }
 
 // Releasing resources required for termination.
