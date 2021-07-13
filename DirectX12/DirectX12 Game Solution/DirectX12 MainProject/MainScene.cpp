@@ -41,6 +41,9 @@ void MainScene::Initialize()
     shark_sprite_x_ = 0.0f;
     shark_sprite_time_ = 0.0f;
 
+    shark_red_alpha_ = 0;
+    shark_red_alpha_flg_ = 0;
+
     // ƒTƒ‚ÌƒQ[ƒW
     shark_gauge_position_.x = SHARK_GAUGE_START_POSITION_X_;
     shark_gauge_position_.y = SHARK_GAUGE_START_POSITION_Y_;
@@ -141,6 +144,8 @@ void MainScene::Initialize()
     game_clear_flg_ = 0;
 
     game_time_ = 0.0f;
+
+    enemy.Initialize();
 }
 
 // Allocate all memory the Direct3D and Direct2D resources.
@@ -204,7 +209,7 @@ void MainScene::LoadAssets()
 
     danger_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"WARNING.png");
 
-   
+    enemy.LoadAssets();
 }
 
 // Releasing resources required for termination.
@@ -247,7 +252,7 @@ NextScene MainScene::Update(const float deltaTime)
         AnglerUpdate(deltaTime);
     }
 
-    if (angler_position_UI_position_.x >= BATTLE_APPEAR_POSITION_X_ || DXTK->KeyEvent->pressed.T) {
+    if (angler_position_UI_position_.x >= BATTLE_APPEAR_POSITION_X_ || DXTK->KeyEvent->pressed.L) {
         if (gauge_display_flg == 0) {
             gauge_display_flg  = 1;
         }
@@ -272,6 +277,9 @@ NextScene MainScene::Update(const float deltaTime)
         return NextScene::LossScene;
 
     }
+
+    enemy.Update(deltaTime, gauge_difference_);
+
     return NextScene::Continue;
 }
 
@@ -298,9 +306,9 @@ void MainScene::GameTimeUpdate(const float deltaTime)
 
 void MainScene::DeadUpdate(const float deltaTime)
 {
-    if (shark_position_.x <= SHARK_LEFT_LIMIT_POSITION_X_) {
+    /*if (shark_position_.x <= SHARK_LEFT_LIMIT_POSITION_X_) {
         game_over_flg_ = 1;
-    }
+    }*/
 }
 
 void MainScene::SharkUpdate(const float deltaTime)
@@ -411,6 +419,18 @@ void MainScene::SharkSpriteUpdate(const float deltaTime)
         if (shark_sprite_x_ >= SHARK_SPRITE_SIZE_X_LIMIT_) {
             shark_sprite_x_ -= SHARK_SPRITE_SIZE_X_LIMIT_;
         }
+    }
+
+    if (enemy.GetHitFlg() == 1) {
+        if (shark_red_alpha_flg_ == 0) {
+            shark_red_alpha_ += 255 * deltaTime;
+        }
+        else {
+            shark_red_alpha_ -= 255 * deltaTime;
+        }
+    }
+    else {
+        shark_red_alpha_ = 0;
     }
 }
 
@@ -945,11 +965,17 @@ void MainScene::Render()
         DX9::SpriteBatch->DrawSimple(
             shark_sprite_.Get(),
             shark_position_,
-            RectWH(shark_sprite_x_, 0.0f, SHARK_SIZE_X_, SHARK_SIZE_Y_)
+            RectWH(shark_sprite_x_, 0.0f, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+            DX9::Colors::RGBA(shark_red_alpha_, 0, 0, 255)
         );
     }
     else {
-        DX9::SpriteBatch->DrawSimple(shark_behind_sprite_.Get(), shark_position_);
+        DX9::SpriteBatch->DrawSimple(
+            shark_sprite_.Get(),
+            shark_position_,
+            RectWH(shark_sprite_x_, 0.0f, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+            DX9::Colors::RGBA(shark_red_alpha_, 0, 0, 255)
+        );
     }
 
     /*DX9::SpriteBatch->DrawSimple(fishing_rod_sprite_.Get(), fishing_rod_position_);*/
@@ -1017,14 +1043,16 @@ void MainScene::Render()
         DX9::SpriteBatch->DrawSimple(you_win_sprite_.Get(), you_win_position);
     }
 
-   /* DX9::SpriteBatch->DrawString(
+    enemy.enemy_Render();
+
+    DX9::SpriteBatch->DrawString(
         debug_font_.Get(),
         SimpleMath::Vector2(0.0f, 0.0f),
         DX9::Colors::RGBA(0, 0, 0, 255),
-        L"%d", atack_count_
+        L"%d", enemy.GetHitFlg()
     );
 
-    DX9::SpriteBatch->DrawString(
+    /*DX9::SpriteBatch->DrawString(
         debug_font_.Get(),
         SimpleMath::Vector2(0.0f, 25.0f),
         DX9::Colors::RGBA(0, 0, 0, 255),

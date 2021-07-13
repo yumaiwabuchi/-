@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include <random>
 //#include "MainScene.h"
+#include "defined.h"
 
 using Microsoft::WRL::ComPtr;
 using std::unique_ptr;
@@ -99,13 +100,13 @@ public:
 	void Initialize();
 	void LoadAssets();
 
-	void Update(const float deltaTime);
+	void Update(const float deltaTime, const int gaugeDirection);
 
 	void Render();
 
 public:
 	//’Ç‰Á@ŠÖ” Main
-	void enemy_pattern_Update(const float deltaTime);
+	void enemy_pattern_Update(const float deltaTime, const int gaugeDirection);
 	void enemy_out_Update(const float deltaTime);
 	//Enemy_Pattern
 	void pattern_1(const float deltaTime);
@@ -152,6 +153,9 @@ private:
 	int back_flag;
 
 	int pattern_flag_x;
+
+	int hit_enemy_flg_;
+	float hit_enemy_time_;
 	
 //random_program ƒ‰ƒ“ƒ_ƒ€generator
 	
@@ -172,7 +176,7 @@ public:
 	float shark_hp_position_y_;
 	float shark_hp_position_z_;
 	
-
-
+	
+	int GetHitFlg() { return hit_enemy_flg_; }
 
 };

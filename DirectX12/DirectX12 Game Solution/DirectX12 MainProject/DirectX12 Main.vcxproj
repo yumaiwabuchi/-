@@ -187,16 +187,14 @@
     <ClInclude Include="Base\GameBase.h" />
     <ClInclude Include="Base\pch.h" />
     <ClInclude Include="Base\StepTimer.h" />
+    <ClInclude Include="defined.h" />
     <ClInclude Include="DontDestroyOnLoad.h" />
-<<<<<<< HEAD
     <ClInclude Include="LossScene.h" />
     <ClInclude Include="OperationScene.h" />
     <ClInclude Include="RuleOperationScene.h" />
     <ClInclude Include="TutorialScene.h" />
     <ClInclude Include="WinScene.h" />
-=======
     <ClInclude Include="enemy_pattern.h" />
->>>>>>> 第二回コンテンツ制作/gitignore
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneFactory.h" />
@@ -216,15 +214,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="LossScene.cpp" />
     <ClCompile Include="OperationScene.cpp" />
     <ClCompile Include="RuleOperationScene.cpp" />
     <ClCompile Include="TutorialScene.cpp" />
     <ClCompile Include="WinScene.cpp" />
-=======
     <ClCompile Include="enemy_pattern.cpp" />
->>>>>>> 第二回コンテンツ制作/gitignore
     <ClCompile Include="MainScene.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

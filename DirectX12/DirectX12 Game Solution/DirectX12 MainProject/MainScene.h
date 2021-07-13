@@ -9,6 +9,8 @@
 #include "Scene.h"
 #include <random>
 #include "DontDestroyOnLoad.h"
+#include "enemy_pattern.h"
+#include "defined.h"
 
 using Microsoft::WRL::ComPtr;
 using std::unique_ptr;
@@ -291,6 +293,8 @@ private:
         rightinput,
         leftinput
     };
+    int shark_red_alpha_;
+    int shark_red_alpha_flg_;
 
     // サメのゲージ
     SimpleMath::Vector3 shark_gauge_position_;
@@ -428,15 +432,7 @@ public:
     // ゲージの差を判定する変数
     int gauge_difference_;
 
-    enum GaugeDirection {
-        sharklarge,
-        sharkmedium,
-        sharksmall,
-        anglerlarge,
-        anglermedium,
-        anglersmall,
-        nothing
-    };
-
+private:
+    enemy_pattern enemy;
 };
 

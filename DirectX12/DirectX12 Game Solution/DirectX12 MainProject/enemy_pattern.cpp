@@ -55,7 +55,8 @@ void enemy_pattern::Initialize()
     enemy_size_x = ENEMY_SIZE_X;
     enemy_size_y = ENEMY_SIZE_Y;
 
-
+    hit_enemy_flg_ = 0;
+    hit_enemy_time_ = 0.0f;
 
    
 }
@@ -68,16 +69,16 @@ void enemy_pattern::LoadAssets()
 
         
         
-            enemy_sprite_1 = DX9::Sprite::CreateFromFile(DXTK->Device9, L"QTE.A.png");
+            enemy_sprite_1 = DX9::Sprite::CreateFromFile(DXTK->Device9, L"c14ab7d9633ac48b.png");
                
-            enemy_sprite_2 = DX9::Sprite::CreateFromFile(DXTK->Device9, L"エネミー岩.png");
+            enemy_sprite_2 = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Rock.png");
         
 
             font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ゴシック", 50);
 
 }
 
-void enemy_pattern::Update(const float deltaTime)
+void enemy_pattern::Update(const float deltaTime, const int gaugeDirection)
 {
     if (DXTK->KeyEvent->pressed.K)
     {
@@ -86,7 +87,7 @@ void enemy_pattern::Update(const float deltaTime)
     }
     
     //関数
-    enemy_pattern_Update(deltaTime);
+    enemy_pattern_Update(deltaTime, gaugeDirection);
 
     if (pattern_flag_x == 1) 
         pattern_1(deltaTime);
@@ -96,7 +97,7 @@ void enemy_pattern::Update(const float deltaTime)
 
 }
 
-void enemy_pattern::enemy_pattern_Update(const float deltaTime)
+void enemy_pattern::enemy_pattern_Update(const float deltaTime, const int gaugeDirection)
 {
    
    if (x_position_[0] >= 1050)
@@ -113,50 +114,54 @@ void enemy_pattern::enemy_pattern_Update(const float deltaTime)
 
         
 
-        if (Random_Enemy_Pattern_1(randomEngine_1) == 1)
-        {
-            
-            pattern_flag_x = 1;
+   if (Random_Enemy_Pattern_1(randomEngine_1) == 1)
+   {
 
-        }
+       pattern_flag_x = 1;
+
+   }
    
 
-    if (DXTK->KeyEvent->pressed.Q) 
+   if (gaugeDirection == nothing) {
+       back_flag = 0;
+   }
+
+    if (DXTK->KeyEvent->pressed.Q || gaugeDirection == sharksmall)
     {
 
         back_flag = 1;  //Random_Enemy_Pattern_2(randomEngine_2);
     
     }
 
-    if (DXTK->KeyEvent->pressed.W)
+    if (DXTK->KeyEvent->pressed.W || gaugeDirection == sharkmedium)
     {
 
         back_flag = 2;  //Random_Enemy_Pattern_2(randomEngine_2);
 
     }
 
-    if (DXTK->KeyEvent->pressed.E)
+    if (DXTK->KeyEvent->pressed.E || gaugeDirection == sharklarge)
     {
 
         back_flag = 3;  //Random_Enemy_Pattern_2(randomEngine_2);
 
     }
 
-    if (DXTK->KeyEvent->pressed.R)
+    if (DXTK->KeyEvent->pressed.R || gaugeDirection == anglersmall)
     {
 
         back_flag = 4;  //Random_Enemy_Pattern_2(randomEngine_2);
 
     }
 
-    if (DXTK->KeyEvent->pressed.T)
+    if (DXTK->KeyEvent->pressed.T || gaugeDirection == anglermedium)
     {
 
         back_flag = 5;  //Random_Enemy_Pattern_2(randomEngine_2);
 
     }
 
-    if (DXTK->KeyEvent->pressed.Y)
+    if (DXTK->KeyEvent->pressed.Y || gaugeDirection == anglerlarge)
     {
 
         back_flag = 6;  //Random_Enemy_Pattern_2(randomEngine_2);
@@ -287,44 +292,54 @@ void enemy_pattern::pattern_1(const float deltaTime)
 
 void enemy_pattern::enemy_out_Update(const float deltaTime)
 {
-    for (int i = 0; i < enemy_count_; i++) {
-        if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
-            (RectWH(x_position_2[i], y_position_2[i], enemy_size_x, enemy_size_y))))
-        {   // 当たった時　とげ
+    if (hit_enemy_flg_ == 0) {
+        for (int i = 0; i < 14; i++) {
+            if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+                (RectWH(x_position_2[i], y_position_2[i], enemy_size_x, enemy_size_y))))
+            {   // 当たった時　とげ
 
-            
-             
-                //= ;
-            
+                hit_enemy_flg_ = 1;
+
+
+
+
+            }
+
+            else {
+
+
+
+            }
 
         }
 
-        else {
+        for (int A = 0; A < 14; A++) {
+            if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+                (RectWH(x_position_2[A], x_position_2[A], enemy_size_x, enemy_size_y))))
+            { //当たった時　岩
+
+                hit_enemy_flg_ = 1;
+
+
+            }
+
+            else
+            {
 
 
 
+            }
         }
-
     }
 
-    for (int A = 0; A < enemy_count_; A++) {
-        if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
-            (RectWH(x_position_2[A], x_position_2[A], enemy_size_x, enemy_size_y))))
-        { //当たった時　岩
+    if (hit_enemy_flg_ == 1) {
+        hit_enemy_time_ += deltaTime;
 
-
-
-
-        }
-
-        else
-        {
-
-
-
+        if (hit_enemy_time_ >= 1.5f) {
+            hit_enemy_time_ = 0.0f;
+            hit_enemy_flg_ = 0;
         }
     }
-
 }
 
 
