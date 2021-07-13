@@ -10,6 +10,9 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{d7d56ad3-60f4-40ad-b499-8133f5f75990}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{a704655a-7420-4105-a478-bdbe939ab77a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base\d3dx12.h">
@@ -42,6 +45,7 @@
     <ClInclude Include="DontDestroyOnLoad.h">
       <Filter>Scene</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="WinScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
@@ -59,6 +63,10 @@
     </ClInclude>
     <ClInclude Include="TutorialScene.h">
       <Filter>Scene</Filter>
+=======
+    <ClInclude Include="enemy_pattern.h">
+      <Filter>Classes</Filter>
+>>>>>>> 第二回コンテンツ制作/gitignore
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +82,7 @@
     <ClCompile Include="MainScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="WinScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -91,6 +100,10 @@
     </ClCompile>
     <ClCompile Include="TutorialScene.cpp">
       <Filter>Scene</Filter>
+=======
+    <ClCompile Include="enemy_pattern.cpp">
+      <Filter>Classes</Filter>
+>>>>>>> 第二回コンテンツ制作/gitignore
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
