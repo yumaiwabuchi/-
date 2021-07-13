@@ -404,6 +404,8 @@ void MainScene::GaugeDifferenceUpdate(const float deltaTime)
             gauge_difference_ = nothing;
         }
     }
+
+
     /*else {
         gauge_difference_ = nothing;
     }*/
@@ -456,7 +458,9 @@ void MainScene::SharkMoveUpdate(const float deltaTime)
     }
 
     if (shark_hp_flg_ == 0) {
+        
         shark_position_ += movement * SPEED * deltaTime;
+        
     }
 
     shark_position_.Clamp(
@@ -473,7 +477,12 @@ void MainScene::SharkMoveUpdate(const float deltaTime)
     }
 
     if (gauge_difference_ == nothing) {
-        shark_position_.x -= SHARK_PULL_SPEED_NOTHING_      * deltaTime;
+        if (enemy.GetHitFlg() == 0) {
+            shark_position_.x -= SHARK_PULL_SPEED_NOTHING_ * deltaTime;
+        }
+        else {
+            shark_position_.x -= SHARK_PULL_SPEED_NOTHING_ * 1.5f * deltaTime;
+        }
     }
     else if (gauge_difference_ == sharklarge) {
         shark_position_.x -= SHARK_PULL_SPEED_SHARKLARGE_   * deltaTime;
