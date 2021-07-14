@@ -39,10 +39,13 @@ void MainScene::Initialize()
     shark_speed_up_ = SHARK_MOVE_UP_SPEED_;
 
     shark_sprite_x_ = 0.0f;
+    shark_sprite_y_ = 0.0f;
     shark_sprite_time_ = 0.0f;
 
-    shark_red_alpha_ = 0;
+    shark_red_alpha_ = 255;
     shark_red_alpha_flg_ = 0;
+
+    shark_moving_time_ = 0.0f;
 
     // サメのゲージ
     shark_gauge_position_.x = SHARK_GAUGE_START_POSITION_X_;
@@ -129,6 +132,9 @@ void MainScene::Initialize()
     you_win_position = SimpleMath::Vector3(0.0f, YOU_WIN_POSITION_Y_, YOU_WIN_POSITION_Z_);
     battle_start_flg_ = 0;
 
+    gauge_thunder_x_ = 0.0f;
+    gauge_thunder_time_ = 0.0f;
+
     tap_flg_ = 0;
 
     count_down_ = COUNT_DOWN_START_;
@@ -178,11 +184,13 @@ void MainScene::LoadAssets()
 
     bg_sky_sprite_        = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Haikei.png");
     bg_front_sea_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"1_00000 (1).png");
-    bg_behind_sea_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"1_00000.png");
+    bg_behind_sea_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"neo.png");
     bg_frame_sprite_      = DX9::Sprite::CreateFromFile(DXTK->Device9, L"image0_11.png");
 
-    gauge_red_sprite_     = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Red_.png");
-    gauge_blue_sprite_    = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Gauge_Blue_.png");
+    gauge_red_sprite_     = DX9::Sprite::CreateFromFile(DXTK->Device9, L"tuba.ao.png");
+    gauge_blue_sprite_    = DX9::Sprite::CreateFromFile(DXTK->Device9, L"tuba.red.png");
+    gauge_frame_sprite_   = DX9::Sprite::CreateFromFile(DXTK->Device9, L"tuba.waku.png");
+    gauge_thunder_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"spritesheet_6.png");
     battle_cut_in_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"battle.png");
     you_win_sprite_       = DX9::Sprite::CreateFromFile(DXTK->Device9, L"You_Win.png");
 
@@ -192,13 +200,14 @@ void MainScene::LoadAssets()
     shark_hp_empty_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.under.png");
     shark_hp_hull_sprite_  = DX9::Sprite::CreateFromFile(DXTK->Device9, L"UI.red.2.psd.png");
 
-    shark_sprite_        = DX9::Sprite::CreateFromFile(DXTK->Device9, L"shark.light.in.png");
+    shark_sprite_        = DX9::Sprite::CreateFromFile(DXTK->Device9, L"spritesheet_1.png");
     shark_behind_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"left1.png");
 
-    shark_gauge_       = DX9::Sprite::CreateFromFile(DXTK->Device9, L"shark_gauge_empty.png");
-    shark_gauge_empty_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"shark_gauge.png");
+    shark_gauge_       = DX9::Sprite::CreateFromFile(DXTK->Device9, L"gauge.2.png");
+    shark_gauge_empty_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"gauge2.red.png");
+    shark_gauge_max_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"max.png");
 
-    angler_line_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"Angler_Line.png");
+    angler_line_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"uki.png");
 
     fishing_rod_sprite_ = DX9::Sprite::CreateFromFile(DXTK->Device9, L"boat.png");
 
@@ -275,7 +284,6 @@ NextScene MainScene::Update(const float deltaTime)
     if (game_over_flg_ == 1) {
         DXTK->GamePadVibration(0.0f, 0.0f, 0.0f);
         return NextScene::LossScene;
-
     }
 
     enemy.Update(deltaTime, gauge_difference_);
@@ -318,7 +326,7 @@ void MainScene::SharkUpdate(const float deltaTime)
     // SharkAtackUpdate (deltaTime);
     SharkSpriteUpdate(deltaTime);
     SharkGaugeUpdate (deltaTime);
-    GaugeDifferenceUpdate(deltaTime);
+
 }
 
 void MainScene::SharkGaugeUpdate(const float deltaTime)
@@ -326,6 +334,18 @@ void MainScene::SharkGaugeUpdate(const float deltaTime)
     if (shark_gauge_x_ < 0.0f) {
         shark_gauge_x_ = 0.0f;
     }
+
+    gauge_thunder_time_ += deltaTime;
+
+    if (gauge_thunder_time_ >= GAUGE_THUNDER_CHANGE_TIME_) {
+        gauge_thunder_x_ += GAUGE_THUNDER_SIZE_X_;
+        gauge_thunder_time_ -= GAUGE_THUNDER_CHANGE_TIME_;
+        if (gauge_thunder_x_ >= GAUGE_THUNDER_LIMIT_X_) {
+            gauge_thunder_x_ -= GAUGE_THUNDER_LIMIT_X_;
+        }
+    }
+
+
 
     // サメの引っ張りゲージ
     if (shark_gauge_flg_ == 0) {
@@ -340,32 +360,67 @@ void MainScene::SharkGaugeUpdate(const float deltaTime)
 
         if (DXTK->GamePadEvent[0].b == GamePad::ButtonStateTracker::PRESSED) {
             shark_gauge_flg_ = 1;
+            shark_gauge_stop_time_ = 0;
+
+            GaugeDifferenceUpdate(deltaTime);
+
+            if (gauge_difference_ == sharklarge) {
+                shark_moving_time_ = SHARKLARGE_GAUGE_STOP_TIME_;
+            }
+            else if (gauge_difference_ == sharkmedium) {
+                shark_moving_time_ = SHARKMEDIUM_GAUGE_STOP_TIME_;
+            }
+            else if (gauge_difference_ == sharksmall) {
+                shark_moving_time_ = SHARKSMALL_GAUGE_STOP_TIME_;
+            }
+            else if (gauge_difference_ == anglerlarge) {
+                shark_moving_time_ = SHARKLARGE_GAUGE_STOP_TIME_;
+            }
+            else if (gauge_difference_ == anglermedium) {
+                shark_moving_time_ = SHARKMEDIUM_GAUGE_STOP_TIME_;
+            }
+            else if (gauge_difference_ == anglersmall) {
+                shark_moving_time_ = SHARKSMALL_GAUGE_STOP_TIME_;
+            }
+
         }
     }
 
-    else {
+
+    
+
+    if (shark_gauge_flg_ == 1) {
         shark_gauge_stop_time_ += deltaTime;
 
-        if (shark_gauge_stop_time_ >= SHARK_GAUGE_STOP_TIME_) {
-            shark_gauge_x_ -= SHARK_GAUGE_DECREASE_SPEED_ * deltaTime;
-            if (shark_gauge_x_ < 0.0f) {
-                shark_standby_flg_ = 1;
+        
 
-                if (shark_standby_flg_ == 1) {
-                    shark_standby_time_ += deltaTime;
+        if (shark_gauge_stop_time_ >= shark_moving_time_) {
+            shark_gauge_flg_ = 2;
+            gauge_difference_ = nothing;
+        }
+    }
 
-                    if (shark_standby_time_ >= 3.0f) {
-                        shark_gauge_stop_time_ = 0.0f;
-                        shark_gauge_speed_ = 0.0f;
-                        shark_gauge_flg_ = 0;
-                        shark_standby_time_ = 0.0f;
-                        shark_standby_flg_ = 0;
-                    }
+    if (shark_gauge_flg_ == 2) {
+        shark_gauge_x_ -= SHARK_GAUGE_DECREASE_SPEED_ * deltaTime;
+        if (shark_gauge_x_ < 0.0f) {
+            shark_standby_flg_ = 1;
+
+            if (shark_standby_flg_ == 1) {
+                shark_standby_time_ += deltaTime;
+
+                if (shark_standby_time_ >= GAUGE_STANDBY_TIME_LIMIT_) {
+                    shark_gauge_stop_time_ = 0.0f;
+                    shark_gauge_speed_ = 0.0f;
+                    shark_gauge_flg_ = 0;
+                    shark_standby_time_ = 0.0f;
+                    shark_standby_flg_ = 0;
                 }
             }
         }
     }
 }
+    
+
 
 void MainScene::GaugeDifferenceUpdate(const float deltaTime)
 {
@@ -417,28 +472,46 @@ void MainScene::SharkSpriteUpdate(const float deltaTime)
 
     if (shark_sprite_time_ >= SHARK_SPRITE_X_CHANGE_TIME_) {
         shark_sprite_x_ += SHARK_SIZE_X_;
-        shark_sprite_time_ -= SHARK_SPRITE_X_CHANGE_TIME_;
+
         if (shark_sprite_x_ >= SHARK_SPRITE_SIZE_X_LIMIT_) {
             shark_sprite_x_ -= SHARK_SPRITE_SIZE_X_LIMIT_;
+
+            shark_sprite_y_ += SHARK_SIZE_Y_;
+            if (shark_sprite_y_ >= SHARK_SPRITE_SIZE_Y_LIMIT_) {
+                shark_sprite_y_ -= SHARK_SPRITE_SIZE_Y_LIMIT_;
+            }
         }
+
+        shark_sprite_time_ -= SHARK_SPRITE_X_CHANGE_TIME_;
+        
     }
 
     if (enemy.GetHitFlg() == 1) {
         if (shark_red_alpha_flg_ == 0) {
-            shark_red_alpha_ += 255 * deltaTime;
+            shark_red_alpha_ -= 255 * deltaTime;
+
+            if (shark_red_alpha_ <= 180) {
+                shark_red_alpha_ = 180;
+                shark_red_alpha_flg_ = 1;
+            }
         }
         else {
-            shark_red_alpha_ -= 255 * deltaTime;
+            shark_red_alpha_ += 255 * deltaTime;
+
+            if (shark_red_alpha_ >= 255) {
+                shark_red_alpha_ = 255;
+                shark_red_alpha_flg_ = 0;
+            }
         }
     }
     else {
-        shark_red_alpha_ = 0;
+        shark_red_alpha_ = 255;
     }
 }
 
 void MainScene::SharkMoveUpdate(const float deltaTime)
 {
-    constexpr float SPEED = 300.0f;
+    constexpr float SPEED = 600.0f;
     const float SQUARE_X =  DXTK->GamePadState[0].thumbSticks.leftX;
     const float SQUARE_Y = -DXTK->GamePadState[0].thumbSticks.leftY;
 
@@ -485,22 +558,28 @@ void MainScene::SharkMoveUpdate(const float deltaTime)
         }
     }
     else if (gauge_difference_ == sharklarge) {
+        shark_moving_time_ = SHARKLARGE_GAUGE_STOP_TIME_;
         shark_position_.x -= SHARK_PULL_SPEED_SHARKLARGE_   * deltaTime;
     }
     else if (gauge_difference_ == sharkmedium) {
         shark_position_.x -= SHARK_PULL_SPEED_SHARKMEDIUM_  * deltaTime;
+        shark_moving_time_ = SHARKMEDIUM_GAUGE_STOP_TIME_;
     }
     else if (gauge_difference_ == sharksmall) {
         shark_position_.x -= SHARK_PULL_SPEED_SHARKSMALL_   * deltaTime;
+        shark_moving_time_ = SHARKSMALL_GAUGE_STOP_TIME_;
     }
     else if (gauge_difference_ == anglerlarge) {
         shark_position_.x -= SHARK_PULL_SPEED_ANGLERLARGE_  * deltaTime;
+        shark_moving_time_ = SHARKLARGE_GAUGE_STOP_TIME_;
     }
     else if (gauge_difference_ == anglermedium) {
         shark_position_.x -= SHARK_PULL_SPEED_ANGLERMEDIUM_ * deltaTime;
+        shark_moving_time_ = SHARKMEDIUM_GAUGE_STOP_TIME_;
     }
     else if (gauge_difference_ == anglersmall) {
         shark_position_.x -= SHARK_PULL_SPEED_ANGLERSMALL_  * deltaTime;
+        shark_moving_time_ = SHARKMEDIUM_GAUGE_STOP_TIME_;
     }
 
    /* SimpleMath::Vector3 towards_fishing_rod_ = fishing_rod_position_ - shark_position_;
@@ -975,15 +1054,15 @@ void MainScene::Render()
             shark_sprite_.Get(),
             shark_position_,
             RectWH(shark_sprite_x_, 0.0f, SHARK_SIZE_X_, SHARK_SIZE_Y_),
-            DX9::Colors::RGBA(shark_red_alpha_, 0, 0, 255)
+            DX9::Colors::RGBA(255, 255, 255, shark_red_alpha_)
         );
     }
     else {
         DX9::SpriteBatch->DrawSimple(
             shark_sprite_.Get(),
             shark_position_,
-            RectWH(shark_sprite_x_, 0.0f, SHARK_SIZE_X_, SHARK_SIZE_Y_),
-            DX9::Colors::RGBA(shark_red_alpha_, 0, 0, 255)
+            RectWH(shark_sprite_x_, shark_sprite_y_, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+            DX9::Colors::RGBA(255, 255, 255, shark_red_alpha_)
         );
     }
 
@@ -1018,6 +1097,12 @@ void MainScene::Render()
         RectWH(0.0f, 0.0f, shark_gauge_x_, SHARK_GAUGE_SIZE_Y_)
     );
 
+    DX9::SpriteBatch->DrawSimple(
+        shark_gauge_max_.Get(),
+        shark_gauge_empty_position_ + SimpleMath::Vector3(50.0f, 0.0f, 0.0f),
+        RectWH(0.0f, 0.0f, SHARK_GAUGE_SIZE_X_, SHARK_GAUGE_SIZE_Y_)
+    );
+
     DX9::SpriteBatch->DrawSimple(angler_UI_.Get(), angler_UI_position_);
     DX9::SpriteBatch->DrawSimple(angler_position_UI_.Get(), angler_position_UI_position_);
 
@@ -1030,13 +1115,28 @@ void MainScene::Render()
     if (battle_start_flg_ == 1) {
         if (battle_start_time_ >= 2.0f) {
             DX9::SpriteBatch->DrawSimple(
+                gauge_blue_sprite_.Get(),
+                SimpleMath::Vector3(GAUGE_START_POSITION_X_, GAUGE_START_POSITION_Y_, gauge_red_z_)
+            );
+
+            DX9::SpriteBatch->DrawSimple(
                 gauge_red_sprite_.Get(),
                 SimpleMath::Vector3(gauge_x_, gauge_y_, gauge_red_z_),
                 RectWH(0.0f, 0.0f, gauge_red_width_, GAUGE_RED_HEIGHT_START_)
             );
 
-            DX9::SpriteBatch->DrawSimple(gauge_blue_sprite_.Get(), SimpleMath::Vector3(gauge_x_, gauge_y_, gauge_blue_z_));
+           
+            DX9::SpriteBatch->DrawSimple(
+                gauge_frame_sprite_.Get(),
+                SimpleMath::Vector3(GAUGE_START_POSITION_X_, GAUGE_START_POSITION_Y_, gauge_red_z_)
+            );
 
+            DX9::SpriteBatch->DrawSimple(
+                gauge_thunder_sprite_.Get(),
+                SimpleMath::Vector3(GAUGE_THUNDER_POSITION_X_, GAUGE_THUNDER_POSITION_Y_, GAUGE_THUNDER_POSITION_Z_),
+                RectWH(gauge_thunder_x_, 0.0f, GAUGE_THUNDER_SIZE_X_, GAUGE_THUNDER_SIZE_Y_)
+            );
+            
             if (tap_flg_ == 0) {
                 DX9::SpriteBatch->DrawString(
                     tap_font_.Get(),

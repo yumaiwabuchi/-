@@ -57,6 +57,8 @@ private:
 
     DX9::SPRITE gauge_red_sprite_;
     DX9::SPRITE gauge_blue_sprite_;
+    DX9::SPRITE gauge_frame_sprite_;
+    DX9::SPRITE gauge_thunder_sprite_;
     DX9::SPRITE battle_cut_in_sprite_;
     DX9::SPRITE you_win_sprite_;
 
@@ -68,6 +70,7 @@ private:
 
     DX9::SPRITE shark_gauge_;
     DX9::SPRITE shark_gauge_empty_;
+    DX9::SPRITE shark_gauge_max_;
 
     DX9::SPRITE angler_line_;
 
@@ -91,7 +94,7 @@ private:
     const float BG_SIZE_X_                     = 1280.0f;
     const float BG_SIZE_Y_                     =  720.0f;
     const float BG_SKY_POSITION_Z_             =    1.0f;
-    const float BG_FRONT_SEA_POSITION_Z_       =   -2.0f;
+    const float BG_FRONT_SEA_POSITION_Z_       =   52.0f;
     const float BG_FRONT_SEA_START_POSITION_X_ = -480.0f;
     const float BG_BEHIND_SEA_POSITION_Z_      =    0.1f;
     const float BG_FRAME_POSITION_Z_           =   -3.0f;
@@ -99,8 +102,8 @@ private:
     const float BG_FRONT_SPEED_                =  150.0f;
     
     // サメの動き
-    const float SHARK_SIZE_X_                 =                      320.0f;
-    const float SHARK_SIZE_Y_                 =                      240.0f;
+    const float SHARK_SIZE_X_                 =                      300.0f;
+    const float SHARK_SIZE_Y_                 =                      200.0f;
     const float SHARK_SIZE_HALF_X_            =        SHARK_SIZE_X_ / 2.0f;
     const float SHARK_SIZE_HALF_Y_            =        SHARK_SIZE_Y_ / 2.0f;
     const float SHARK_START_POSITION_X_       = 640.0f - SHARK_SIZE_HALF_X_;
@@ -118,25 +121,30 @@ private:
     const float SHARK_MOVE_UP_SPEED_UP_       =                        3.0f;
     const float SHARK_MOVE_UP_SPEED_UP_LIMIT_ =                        3.0f;
     const float INPUT_TIME_LIMIT_             =                        0.5f;
-    const float SHARK_SPRITE_X_CHANGE_TIME_   =                        0.2f;
-    const float SHARK_SPRITE_SIZE_X_LIMIT_    =     4160.0f - SHARK_SIZE_X_;
+    const float SHARK_SPRITE_X_CHANGE_TIME_   =                       0.05f;
+    const float SHARK_SPRITE_SIZE_X_LIMIT_    =        SHARK_SIZE_X_ * 4.0f;
+    const float SHARK_SPRITE_SIZE_Y_LIMIT_    =        SHARK_SIZE_Y_ * 6.0f;
 
     // サメのゲージ
-    const float SHARK_GAUGE_START_POSITION_X_ = 640.0f - 300.0f;
+    const float SHARK_GAUGE_START_POSITION_X_ = 640.0f - 554.0f / 2.0f;
     const float SHARK_GAUGE_START_POSITION_Y_ = 620.0f;
     const float SHARK_GAUGE_START_POSITION_Z_ =           -10.0f;
-    const float SHARK_GAUGE_SIZE_X_           = 600.0f;
-    const float SHARK_GAUGE_SIZE_Y_           = 50.0f;
+    const float SHARK_GAUGE_SIZE_X_           = 554.0f;
+    const float SHARK_GAUGE_SIZE_Y_           = 59.0f;
     const float SHARK_GAUGE_GROW_SPEED_       = 600.0f;
     const float SHARK_GAUGE_DECREASE_SPEED_   = 400.0f;
-    const float SHARK_GAUGE_STOP_TIME_        = 1.0f;
+    const float SHARK_GAUGE_STOP_TIME_        = 5.0f;
+    const float SHARKLARGE_GAUGE_STOP_TIME_        = 6.0f;
+    const float SHARKMEDIUM_GAUGE_STOP_TIME_        = 4.0f;
+    const float SHARKSMALL_GAUGE_STOP_TIME_        = 2.0f;
+
 
     // 釣り人のライン
-    const float ANGLER_LINE_START_POSITION_X_ = SHARK_GAUGE_START_POSITION_X_ + 100.0f;
+    const float ANGLER_LINE_START_POSITION_X_ = SHARK_GAUGE_START_POSITION_X_ + 92.5f;
     const float ANGLER_LINE_START_POSITION_Y_ = SHARK_GAUGE_START_POSITION_Y_;
     const float ANGLER_LINE_START_POSITION_Z_ = SHARK_GAUGE_START_POSITION_Z_;
     const float ANGLER_LINE_LIMIT_RIGHT_ = SHARK_GAUGE_START_POSITION_X_ + SHARK_GAUGE_SIZE_X_ - 100.0f;
-    const float ANGLER_LINE_LIMIT_LEFT_  = SHARK_GAUGE_START_POSITION_X_ + 100.0f;
+    const float ANGLER_LINE_LIMIT_LEFT_  = SHARK_GAUGE_START_POSITION_X_ + 92.5f;
     const float ANGLER_LINE_MOVE_SPEED_ = 450.0f;
     
     // サメのHP
@@ -159,12 +167,12 @@ private:
 
     // サメ引っ張られる力
     const float SHARK_PULL_SPEED_NOTHING_      = 310.0f;
-    const float SHARK_PULL_SPEED_SHARKLARGE_   =  10.0f;
-    const float SHARK_PULL_SPEED_SHARKMEDIUM_  =  50.0f;
-    const float SHARK_PULL_SPEED_SHARKSMALL_   = 100.0f;
-    const float SHARK_PULL_SPEED_ANGLERLARGE_  = 460.0f;
-    const float SHARK_PULL_SPEED_ANGLERMEDIUM_ = 410.0f;
-    const float SHARK_PULL_SPEED_ANGLERSMALL_  = 360.0f;
+    const float SHARK_PULL_SPEED_SHARKLARGE_   = 220.0f;
+    const float SHARK_PULL_SPEED_SHARKMEDIUM_  = 260.0f;
+    const float SHARK_PULL_SPEED_SHARKSMALL_   = 290.0f;
+    const float SHARK_PULL_SPEED_ANGLERLARGE_  = 330.0f;
+    const float SHARK_PULL_SPEED_ANGLERMEDIUM_ = 360.0f;
+    const float SHARK_PULL_SPEED_ANGLERSMALL_  = 400.0f;
 
     // 釣り人UI
     const float ANGLER_UI_START_POSITION_X_ = 640.0f - (843.0f / 2.0f);
@@ -227,14 +235,14 @@ private:
     const float ANGLER_POSITION_SPEED_UP_Y_ =            15.0f;
 
     // つばぜり合い
-    const float GAUGE_SIZE_HALF_X_          =   300.0f;
-    const float GAUGE_START_POSITION_X_     =   340.0f;
-    const float GAUGE_START_POSITION_Y_     =   260.0f;
+    const float GAUGE_SIZE_HALF_X_          =   500.0f;
+    const float GAUGE_START_POSITION_X_     =   140.0f;
+    const float GAUGE_START_POSITION_Y_     =   360.0f - 175.0f;
     const float GAUGE_RED_POSITION_Z_       =   -30.0f;
     const float GAUGE_BLUE_POSITION_Z_      =   -29.0f;
-    const float GAUGE_RED_HEIGHT_START_     =   200.0f;
-    const float GAUGE_RED_WIDTH_START_      =   300.0f;
-    const float GAUGE_RED_WIDTH_LIMIT_      =   600.0f;
+    const float GAUGE_RED_HEIGHT_START_     =   350.0f;
+    const float GAUGE_RED_WIDTH_START_      =   500.0f;
+    const float GAUGE_RED_WIDTH_LIMIT_      =   1000.0f;
     const float GAUGE_RED_WIDTH_ADD_SPEED_  =   200.0f;
     const float GAUGE_RED_WIDTH_TAKE_SPEED_ =  1350.0f;
     const float BATTLE_CUT_IN_POSI_X_       = -1280.0f;
@@ -248,6 +256,14 @@ private:
     const float BATTLE_FINISH_CLEAR_TIME_ = 3.0f;
     const float BATTLE_FINISH_MISS_TIME_ = 0.5f;
     const float BATTLE_MISS_UI_BACK_SPEED_ = 1000.0f;
+    const float GAUGE_THUNDER_SIZE_X_ = 239.0;
+    const float GAUGE_THUNDER_SIZE_Y_ = 722.0;
+    const float GAUGE_THUNDER_POSITION_X_ = 640.0f - 239.0f / 2.0f;
+    const float GAUGE_THUNDER_POSITION_Y_ = 50.0f;//360.0f - GAUGE_THUNDER_SIZE_Y_ / 2.0f;
+    const float GAUGE_THUNDER_POSITION_Z_ = -50.0f;
+    const float GAUGE_THUNDER_CHANGE_TIME_ = 0.1f;
+    const float GAUGE_THUNDER_LIMIT_X_ = GAUGE_THUNDER_SIZE_X_ * 21.0f;
+    const float GAUGE_STANDBY_TIME_LIMIT_ = 3.0f;
 
     // カウントダウン
     const float COUNT_DOWN_START_           =     100.0f;
@@ -288,6 +304,7 @@ private:
     float right_input_time_;
     float left_input_time_;
     float shark_sprite_x_;
+    float shark_sprite_y_;
     float shark_sprite_time_;
     enum SharkState {
         rightinput,
@@ -295,6 +312,7 @@ private:
     };
     int shark_red_alpha_;
     int shark_red_alpha_flg_;
+    float shark_moving_time_;
 
     // サメのゲージ
     SimpleMath::Vector3 shark_gauge_position_;
@@ -305,6 +323,7 @@ private:
     float shark_gauge_stop_time_;
     int shark_standby_flg_;
     float shark_standby_time_;
+    float gauge_thunder_x_;
 
     // 釣り人ライン
     SimpleMath::Vector3 angler_line_position_;
@@ -383,6 +402,7 @@ private:
     int you_win_flg;
     SimpleMath::Vector3 you_win_position;
     int battle_start_flg_;
+    float gauge_thunder_time_;
 
     // カウントダウン
     int   count_down_;
