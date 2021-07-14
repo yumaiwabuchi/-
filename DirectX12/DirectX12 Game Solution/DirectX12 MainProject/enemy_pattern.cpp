@@ -16,6 +16,8 @@ void enemy_pattern::Initialize()
 
     enemy_count_2 = ENEMY_COUNT2_;
 
+    speed_up_time_ = SPEED_UP_TIME_;
+
     for (int i = 0; i < ENEMY_COUNT_; i++)
     {
         x_position_[i] = X_START_POSITION_[i];
@@ -39,16 +41,16 @@ void enemy_pattern::Initialize()
 
     //変数　初期化
     
-
+    //障害物移動スピード
     left_speed_serect_1 = LEFT_SPEED_SERECT_1;
-    left_speed_serect_2 = LEFT_SPEED_SERECT_2;
-    left_speed_serect_3 = LEFT_SPEED_SERECT_3;
+    /*left_speed_serect_2 = LEFT_SPEED_SERECT_2;
+    left_speed_serect_3 = LEFT_SPEED_SERECT_3;*/
 
     normal_speed_serect_ = NORMAL_SPEED_SERECT_;
 
     light_speed_serect_1 = LIGHT_SPEED_SERECT_1;
-    light_speed_serect_2 = LIGHT_SPEED_SERECT_2;
-    light_speed_serect_3 = LIGHT_SPEED_SERECT_3;
+    /*light_speed_serect_2 = LIGHT_SPEED_SERECT_2;
+    light_speed_serect_3 = LIGHT_SPEED_SERECT_3;*/
 
 
     //当たり判定
@@ -58,7 +60,7 @@ void enemy_pattern::Initialize()
     hit_enemy_flg_ = 0;
     hit_enemy_time_ = 0.0f;
 
-   
+    fishing_time_ = FISHING_TIME_;
 }
 
 void enemy_pattern::LoadAssets()
@@ -76,9 +78,11 @@ void enemy_pattern::LoadAssets()
 
             font_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"MS ゴシック", 50);
 
+            fishing_timenoon_ = DX9::SpriteFont::CreateFromFontName(DXTK->Device9, L"lobster",55);
+
 }
 
-void enemy_pattern::Update(const float deltaTime, const int gaugeDirection)
+void enemy_pattern::Update(const float deltaTime, const int gaugeDirection, SimpleMath::Vector3& shark_position)
 {
     if (DXTK->KeyEvent->pressed.K)
     {
@@ -90,7 +94,7 @@ void enemy_pattern::Update(const float deltaTime, const int gaugeDirection)
     enemy_pattern_Update(deltaTime, gaugeDirection);
 
     if (pattern_flag_x == 1) 
-        pattern_1(deltaTime);
+        pattern_1(deltaTime, shark_position);
     
     
 
@@ -100,7 +104,7 @@ void enemy_pattern::Update(const float deltaTime, const int gaugeDirection)
 void enemy_pattern::enemy_pattern_Update(const float deltaTime, const int gaugeDirection)
 {
    
-   if (x_position_[0] >= 1050)
+   if (x_position_[0] >= 1250)
    {
        back_flag = 7;
 
@@ -121,9 +125,10 @@ void enemy_pattern::enemy_pattern_Update(const float deltaTime, const int gaugeD
 
    }
    
-
-   if (gaugeDirection == nothing) {
-       back_flag = 0;
+   if (back_flag <= 6) {
+       if (gaugeDirection == nothing) {
+           back_flag = 0;
+       }
    }
 
     if (DXTK->KeyEvent->pressed.Q || gaugeDirection == sharksmall)
@@ -147,34 +152,38 @@ void enemy_pattern::enemy_pattern_Update(const float deltaTime, const int gaugeD
 
     }
 
-    if (DXTK->KeyEvent->pressed.R || gaugeDirection == anglersmall)
-    {
+    if (back_flag <= 6) {
 
-        back_flag = 4;  //Random_Enemy_Pattern_2(randomEngine_2);
+        if (DXTK->KeyEvent->pressed.R || gaugeDirection == anglersmall)
+        {
 
+            back_flag = 4;  //Random_Enemy_Pattern_2(randomEngine_2);
+
+        }
+
+        if (DXTK->KeyEvent->pressed.T || gaugeDirection == anglermedium)
+        {
+
+            back_flag = 5;  //Random_Enemy_Pattern_2(randomEngine_2);
+
+        }
+
+        if (DXTK->KeyEvent->pressed.Y || gaugeDirection == anglerlarge)
+        {
+
+            back_flag = 6;  //Random_Enemy_Pattern_2(randomEngine_2);
+
+        }
     }
-
-    if (DXTK->KeyEvent->pressed.T || gaugeDirection == anglermedium)
-    {
-
-        back_flag = 5;  //Random_Enemy_Pattern_2(randomEngine_2);
-
-    }
-
-    if (DXTK->KeyEvent->pressed.Y || gaugeDirection == anglerlarge)
-    {
-
-        back_flag = 6;  //Random_Enemy_Pattern_2(randomEngine_2);
-
-    }
-
 
 }
 
-void enemy_pattern::pattern_1(const float deltaTime)
+void enemy_pattern::pattern_1(const float deltaTime, SimpleMath::Vector3& shark_position)
 {
         if (back_flag == 0) 
         {
+
+            fishing_time_ -= 2 * deltaTime;
 
             for (int i = 0; i < enemy_count_; i++) {
 
@@ -193,11 +202,12 @@ void enemy_pattern::pattern_1(const float deltaTime)
         else if (back_flag == 1) 
         {
 
+            fishing_time_ += 2 * deltaTime;
 
-
-
+            left_speed_serect_1 = LEFT_SPEED_SERECT_1;
+            speed_up_time_ += deltaTime;
             for (int i = 0; i < enemy_count_; i++) {
-
+                fishing_time_ += 2 * deltaTime * 2;
                 x_position_[i] -= left_speed_serect_1 * deltaTime;
 
             }
@@ -212,14 +222,18 @@ void enemy_pattern::pattern_1(const float deltaTime)
         else if (back_flag == 2) 
         {
 
-            for (int i = 0; i < enemy_count_; i++) {
+            fishing_time_ += 4 * deltaTime;
 
-                x_position_[i] -= left_speed_serect_2 * deltaTime;
+            left_speed_serect_1 = LEFT_SPEED_SERECT_1;
+            speed_up_time_ += deltaTime;
+            for (int i = 0; i < enemy_count_; i++) {
+                fishing_time_ += 4 * deltaTime * 2;
+                x_position_[i] -= left_speed_serect_1 * deltaTime;
             }
 
             for (int A = 0; A < enemy_count_2; A++) {
 
-                x_position_2[A] -= left_speed_serect_2 * deltaTime;
+                x_position_2[A] -= left_speed_serect_1 * deltaTime;
             }
 
         }
@@ -227,14 +241,18 @@ void enemy_pattern::pattern_1(const float deltaTime)
         else if (back_flag == 3) 
         {
 
-            for (int i = 0; i < enemy_count_; i++) {
+            fishing_time_ += 6 * deltaTime;
 
-                x_position_[i] -= left_speed_serect_3 * deltaTime;
+            left_speed_serect_1 = LEFT_SPEED_SERECT_1;
+            speed_up_time_ += deltaTime;
+            for (int i = 0; i < enemy_count_; i++) {
+                fishing_time_ += 6 * deltaTime * 2;
+                x_position_[i] -= left_speed_serect_1 * deltaTime;
             }
 
             for (int A = 0; A < enemy_count_2; A++) {
 
-                x_position_2[A] -= left_speed_serect_3 * deltaTime;
+                x_position_2[A] -= left_speed_serect_1 * deltaTime;
             }
 
         }
@@ -242,8 +260,12 @@ void enemy_pattern::pattern_1(const float deltaTime)
         else if (back_flag == 4) 
         {
 
-            for (int i = 0; i < enemy_count_; i++) {
+            fishing_time_ -= 2 * deltaTime;
 
+            light_speed_serect_1 = LIGHT_SPEED_SERECT_1;
+            speed_up_time_ += deltaTime;
+            for (int i = 0; i < enemy_count_; i++) {
+                fishing_time_ -= 2 * deltaTime;
                 x_position_[i] += light_speed_serect_1 * deltaTime;
 
             }
@@ -258,14 +280,18 @@ void enemy_pattern::pattern_1(const float deltaTime)
         else if (back_flag == 5) 
         {
 
-            for (int i = 0; i < enemy_count_; i++) {
+            fishing_time_ -= 4 * deltaTime;
 
-                x_position_[i] += light_speed_serect_2 * deltaTime;
+            light_speed_serect_1 = LIGHT_SPEED_SERECT_1;
+            speed_up_time_ += deltaTime;
+            for (int i = 0; i < enemy_count_; i++) {
+                fishing_time_ -= 4 * deltaTime;
+                x_position_[i] += light_speed_serect_1 * deltaTime;
             }
 
             for (int A = 0; A < enemy_count_2; A++) {
 
-                x_position_2[A] += light_speed_serect_2 * deltaTime;
+                x_position_2[A] += light_speed_serect_1 * deltaTime;
             }
 
         }
@@ -273,34 +299,64 @@ void enemy_pattern::pattern_1(const float deltaTime)
         else if (back_flag == 6) 
         {
 
-            for (int i = 0; i < enemy_count_; i++) {
+            fishing_time_ -= 6 * deltaTime;
 
-                x_position_[i] += light_speed_serect_3 * deltaTime;
+            light_speed_serect_1 = LIGHT_SPEED_SERECT_1;
+            speed_up_time_ += deltaTime;
+            for (int i = 0; i < enemy_count_; i++) {
+                fishing_time_ -= 6 * deltaTime;
+                x_position_[i] += light_speed_serect_1 * deltaTime;
             }
 
             for (int A = 0; A < enemy_count_2; A++) {
 
-                x_position_2[A] += light_speed_serect_3 * deltaTime;
+                x_position_2[A] += light_speed_serect_1 * deltaTime;
             }
 
         }
 
-      enemy_out_Update(deltaTime);
+        else if (back_flag == 7)
+        {
+
+
+
+       
+        }
+
+        if (back_flag == 1 && speed_up_time_ >= 2.0f)
+        {
+            left_speed_serect_1 = 0.0f;
+            speed_up_time_ = 0.0f;
+
+        }
+        if (back_flag == 2 && speed_up_time_ >= 4.0f)
+        {
+            left_speed_serect_1 = 0.0f;
+            speed_up_time_ = 0.0f;
+        }
+
+        if (back_flag == 3 && speed_up_time_ >= 6.0f)        
+        {
+                left_speed_serect_1 = 0.0f;
+            speed_up_time_ = 0.0f;
+        }
+
+
+      enemy_out_Update(deltaTime, shark_position);
 
     
 }
 
-void enemy_pattern::enemy_out_Update(const float deltaTime)
+void enemy_pattern::enemy_out_Update(const float deltaTime, SimpleMath::Vector3& shark_position)
 {
     if (hit_enemy_flg_ == 0) {
-        for (int i = 0; i < 14; i++) {
-            if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
-                (RectWH(x_position_2[i], y_position_2[i], enemy_size_x, enemy_size_y))))
+        for (int i = 0; i < enemy_count_; i++) {
+            if (isIntersect(RectWH(shark_position.x, shark_position.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+                (RectWH(x_position_[i], y_position_[i], enemy_size_x, enemy_size_y))))
             {   // 当たった時　とげ
 
                 hit_enemy_flg_ = 1;
-
-
+                
 
 
             }
@@ -313,9 +369,9 @@ void enemy_pattern::enemy_out_Update(const float deltaTime)
 
         }
 
-        for (int A = 0; A < 14; A++) {
-            if (isIntersect(RectWH(shark_position_.x, shark_position_.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
-                (RectWH(x_position_2[A], x_position_2[A], enemy_size_x, enemy_size_y))))
+        for (int A = 0; A < enemy_count_2; A++) {
+            if (isIntersect(RectWH(shark_position.x, shark_position.y, SHARK_SIZE_X_, SHARK_SIZE_Y_),
+                (RectWH(x_position_2[A], y_position_2[A], enemy_size_x, enemy_size_y))))
             { //当たった時　岩
 
                 hit_enemy_flg_ = 1;
@@ -328,6 +384,7 @@ void enemy_pattern::enemy_out_Update(const float deltaTime)
 
 
 
+
             }
         }
     }
@@ -335,7 +392,23 @@ void enemy_pattern::enemy_out_Update(const float deltaTime)
     if (hit_enemy_flg_ == 1) {
         hit_enemy_time_ += deltaTime;
 
+        left_speed_serect_1 -= DOWN_POWER_ * deltaTime;
+       /* left_speed_serect_2 -= DOWN_POWER_ * deltaTime;
+        left_speed_serect_3 -= DOWN_POWER_ * deltaTime;*/
+
+        light_speed_serect_1 += UP_POWER_ * deltaTime;
+        /*light_speed_serect_2 += UP_POWER_ * deltaTime;
+        light_speed_serect_3 += UP_POWER_ * deltaTime;*/
+
+
         if (hit_enemy_time_ >= 1.5f) {
+            left_speed_serect_1 = LEFT_SPEED_SERECT_1;
+            /*left_speed_serect_2 = LEFT_SPEED_SERECT_2;
+            left_speed_serect_3 = LEFT_SPEED_SERECT_3;*/
+
+            light_speed_serect_1 = LIGHT_SPEED_SERECT_1;
+            /*light_speed_serect_2 = LIGHT_SPEED_SERECT_2;
+            light_speed_serect_3 = LIGHT_SPEED_SERECT_3;*/
             hit_enemy_time_ = 0.0f;
             hit_enemy_flg_ = 0;
         }
@@ -375,10 +448,10 @@ void enemy_pattern::enemy_Render()
 
 
     DX9::SpriteBatch->DrawString(
-        font_.Get(),
-        SimpleMath::Vector2(320.0f, 300.0f),
-        DX9::Colors::RGBA(0, 0, 0, 255),
-        L"%d", pattern_flag_x
+        fishing_timenoon_.Get(),
+        SimpleMath::Vector2(1000.0f, 600.0f),
+        DX9::Colors::RGBA(255, 255, 0, 255),
+        L"%dm",fishing_time_
     );
 
 

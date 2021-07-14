@@ -278,7 +278,7 @@ NextScene MainScene::Update(const float deltaTime)
 
     }
 
-    enemy.Update(deltaTime, gauge_difference_);
+    enemy.Update(deltaTime, gauge_difference_, shark_position_);
 
     return NextScene::Continue;
 }
@@ -354,7 +354,7 @@ void MainScene::SharkGaugeUpdate(const float deltaTime)
                 if (shark_standby_flg_ == 1) {
                     shark_standby_time_ += deltaTime;
 
-                    if (shark_standby_time_ >= 3.0f) {
+                    if (shark_standby_time_ >= 1.8f) {
                         shark_gauge_stop_time_ = 0.0f;
                         shark_gauge_speed_ = 0.0f;
                         shark_gauge_flg_ = 0;
@@ -438,7 +438,7 @@ void MainScene::SharkSpriteUpdate(const float deltaTime)
 
 void MainScene::SharkMoveUpdate(const float deltaTime)
 {
-    constexpr float SPEED = 300.0f;
+    constexpr float SPEED = 500.0f;
     const float SQUARE_X =  DXTK->GamePadState[0].thumbSticks.leftX;
     const float SQUARE_Y = -DXTK->GamePadState[0].thumbSticks.leftY;
 
